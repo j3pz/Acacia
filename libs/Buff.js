@@ -2,10 +2,8 @@ const Utils = require('./Utils');
 
 class Buff {
 	constructor(data) {
-		this.data = data;
-		this.data.level = 1;
 		// 初始化 Buff 的额外加成
-		this.data.extraAttr = {
+		this.data = {
 			damage: 0,
 			attackAddPercent: 0,
 			attackAddBase: 0,
@@ -20,6 +18,11 @@ class Buff {
 			strainAddPercent: 0,
 			strainAddBase: 0,
 		};
+		// 载入数据
+		for (const key of Object.keys(data)) {
+			this[key] = data[key];
+		}
+		this.level = 1;
 		return this;
 	}
 
@@ -93,15 +96,15 @@ class Buff {
 		}
 
 		// 伤害 = (攻击 * Buff 系数 + 随机浮动伤害 * (识破与否 * 0.25 + 会心与否 * 会效率 + 命中与否)) * 破防加成
-		damage = ((onFightAttr.attack * this.data.cof) +
-			((this.data.max - this.data.min) * Math.random()) + this.data.min) *
+		damage = ((onFightAttr.attack * this.cof) +
+			((this.max - this.min) * Math.random()) + this.min) *
 			((0.25 * flag.insight) + ((onFightAttr.critEff / 100) * flag.crit) + (1 * flag.hit));
 		damage = damage * (1 + (onFightAttr.overcome / 3616.925)) *
 			(1 - (ctrl.target.shield / 100)) *
 			(1 + (onFightAttr.damageAddPercent / 100));
 		damage = damage.toFixed(0) * ctrl.level;
 		const status = (flag.insight ? '识破' : '') + (flag.crit ? '会心' : '') + (flag.hit ? '命中' : '');
-		const log = `${this.data.name}(buff) ${status} ${damage}`;
+		const log = `${this.name}(buff) ${status} ${damage}`;
 
 		Utils.logln(log);
 		Utils.calcDamage(damage);

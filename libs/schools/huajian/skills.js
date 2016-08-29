@@ -1,8 +1,8 @@
 const Skill = require('../../Skill');
 const Utils = require('../../Utils');
 
-const skills = {
-	yangMingZhi: new Skill({
+const skills = [
+	new Skill({
 		icon: 1527,
 		name: '阳明指',
 		type: 'ota',
@@ -130,7 +130,7 @@ const skills = {
 		},
 	}),
 
-	shangYangZhi: new Skill({
+	new Skill({
 		icon: 1514,
 		name: '商阳指',
 		type: 'instant',
@@ -181,7 +181,7 @@ const skills = {
 		},
 	}),
 
-	yuShiJuFen: new Skill({
+	new Skill({
 		icon: 411,
 		name: '玉石俱焚',
 		type: 'instant',
@@ -252,7 +252,7 @@ const skills = {
 		},
 	}),
 
-	kuaiXueShiQing: new Skill({
+	new Skill({
 		icon: 2999,
 		name: '快雪时晴',
 		type: 'channel',
@@ -335,7 +335,7 @@ const skills = {
 		},
 	}),
 
-	zhongLinYuXiu: new Skill({
+	new Skill({
 		icon: 404,
 		name: '钟林毓秀',
 		type: 0,
@@ -379,7 +379,7 @@ const skills = {
 		},
 	}),
 
-	lanCuiYuZhe: new Skill({
+	new Skill({
 		icon: 390,
 		name: '兰摧玉折',
 		type: 0,
@@ -426,7 +426,7 @@ const skills = {
 		},
 	}),
 
-	fuRongBingDi: new Skill({
+	new Skill({
 		icon: 398,
 		name: '芙蓉并蒂',
 		type: 'instant',
@@ -469,7 +469,7 @@ const skills = {
 		},
 	}),
 
-	shuiYueWuJian: new Skill({
+	new Skill({
 		icon: 1522,
 		name: '水月无间',
 		type: 'instant',
@@ -513,7 +513,7 @@ const skills = {
 		},
 	}),
 
-	luanSaQingHe: new Skill({
+	new Skill({
 		icon: 3001,
 		name: '乱洒青荷',
 		type: 'instant',
@@ -552,6 +552,6 @@ const skills = {
 		onSkillFinish(ctrl) {
 		},
 	}),
-};
+];
 
 module.exports = skills;

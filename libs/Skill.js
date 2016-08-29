@@ -18,7 +18,7 @@ class Skill {
 					this.extraAttr.damage = this.extraAttr.damage + ctrl.recipes[i].value;
 					break;
 				case 'costMinusPercent':
-						// this.cost
+					// this.cost
 					break;
 				case 'critAddPercent':
 					this.extraAttr.critAddPercent = this.extraAttr.critAddPercent + ctrl.recipes[i].value;

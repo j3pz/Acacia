@@ -1,8 +1,7 @@
-const Buff = require('../../Buff');
 const Utils = require('../../Utils');
 
-const buffs = {
-	shangYangDot: new Buff({
+const buffs = [
+	{
 		icon: 1514,
 		name: '商阳指',
 		desc: '商阳指',
@@ -31,9 +30,8 @@ const buffs = {
 		onSkillCritEvent(ctrl) {
 			this.onSkillHitEvent(ctrl);
 		},
-	}),
-
-	zhongLinDot: new Buff({
+	},
+	{
 		icon: 404,
 		name: '钟林毓秀',
 		desc: '钟林毓秀',
@@ -62,9 +60,8 @@ const buffs = {
 		onSkillCritEvent(ctrl) {
 			this.onSkillHitEvent(ctrl);
 		},
-	}),
-
-	lanCuiDot: new Buff({
+	},
+	{
 		icon: 390,
 		name: '兰摧玉折',
 		desc: '兰摧玉折',
@@ -93,9 +90,8 @@ const buffs = {
 		onSkillCritEvent(ctrl) {
 			this.onSkillHitEvent(ctrl);
 		},
-	}),
-
-	ziYouBuff: new Buff({
+	},
+	{
 		icon: 1527,
 		name: '恣游',
 		desc: '恣游',
@@ -116,9 +112,8 @@ const buffs = {
 		},
 		onSkillCritEvent(ctrl) {
 		},
-	}),
-
-	shiGuBuff: new Buff({
+	},
+	{
 		icon: 1672,
 		name: '噬骨',
 		desc: '噬骨',
@@ -139,9 +134,8 @@ const buffs = {
 		},
 		onSkillCritEvent(ctrl) {
 		},
-	}),
-
-	hanBiCD: new Buff({
+	},
+	{
 		icon: 408,
 		name: '寒碧',
 		desc: '寒碧',
@@ -160,9 +154,8 @@ const buffs = {
 		},
 		onSkillCritEvent(ctrl) {
 		},
-	}),
-
-	fenYuBuff: new Buff({
+	},
+	{
 		icon: 411,
 		name: '焚玉',
 		desc: '焚玉',
@@ -181,9 +174,8 @@ const buffs = {
 		},
 		onSkillCritEvent(ctrl) {
 		},
-	}),
-
-	fangGeBuff: new Buff({
+	},
+	{
 		icon: 3015,
 		name: '放歌',
 		desc: '放歌',
@@ -202,9 +194,8 @@ const buffs = {
 		},
 		onSkillCritEvent(ctrl) {
 		},
-	}),
-
-	shuiYueBuff: new Buff({
+	},
+	{
 		icon: 1522,
 		name: '水月无间',
 		desc: '水月无间',
@@ -223,9 +214,8 @@ const buffs = {
 		},
 		onSkillCritEvent(ctrl) {
 		},
-	}),
-
-	buSanBuff: new Buff({
+	},
+	{
 		icon: 327,
 		name: '布散',
 		desc: '布散',
@@ -246,9 +236,8 @@ const buffs = {
 		},
 		onSkillCritEvent(ctrl) {
 		},
-	}),
-
-	luanSaBuff: new Buff({
+	},
+	{
 		icon: 3001,
 		name: '乱洒青荷',
 		desc: '乱洒青荷',
@@ -270,9 +259,8 @@ const buffs = {
 		},
 		onSkillCritEvent(ctrl) {
 		},
-	}),
-
-	liuLiBuff: new Buff({
+	},
+	{
 		icon: 3002,
 		name: '流离',
 		desc: '流离',
@@ -291,9 +279,8 @@ const buffs = {
 		},
 		onSkillCritEvent(ctrl) {
 		},
-	}),
-
-	mengGeBuff: new Buff({
+	},
+	{
 		icon: 4528,
 		name: '梦歌',
 		desc: '梦歌',
@@ -314,9 +301,8 @@ const buffs = {
 		},
 		onSkillCritEvent(ctrl) {
 		},
-	}),
-
-	yanXuanBuff: new Buff({
+	},
+	{
 		icon: 1522,
 		name: '砚悬',
 		desc: '砚悬',
@@ -337,9 +323,8 @@ const buffs = {
 		},
 		onSkillCritEvent(ctrl) {
 		},
-	}),
-
-	juanLiuBuff: new Buff({
+	},
+	{
 		icon: 7468,
 		name: '涓流',
 		desc: '涓流',
@@ -361,9 +346,8 @@ const buffs = {
 		},
 		onSkillCritEvent(ctrl) {
 		},
-	}),
-
-	nuChi: new Buff({
+	},
+	{
 		icon: 15,
 		name: '怒叱',
 		desc: '怒叱',
@@ -384,7 +368,7 @@ const buffs = {
 		},
 		onSkillCritEvent(ctrl) {
 		},
-	}),
-};
+	},
+];
 
 module.exports = buffs;
