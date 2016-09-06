@@ -10,6 +10,7 @@ class Jx3Simulator {
 			self: {},
 			talent: [],
 			recipes: {},
+			effects: {},
 		};
 		if (options && typeof options === 'object') {
 			this.init(options);
@@ -18,10 +19,10 @@ class Jx3Simulator {
 	}
 
 	init(options) {
-		for (const key of options.keys()) {
+		for (const key of Object.keys(options)) {
 			if (typeof options[key] === 'object' && !Array.isArray(options[key])) {
 				const subOption = options[key];
-				for (const subKey of subOption.keys()) {
+				for (const subKey of Object.keys(subOption)) {
 					this.options[key][subKey] = subOption[key];
 				}
 			} else {
