@@ -53,7 +53,7 @@ class Buff {
 		// 破防 = 自身破防等级 + 基础破防等级 * (Buff 破防百分比加成 + 自身破防百分比加成) + Buff 破防等级加成 + 自身破防等级加成
 		const overcome = parseInt(ctrl.self.attributes.overcome, 10) +
 			((ctrl.self.attributes.overcome - (ctrl.self.attributes.spunk * 0.34)) *
-				((this.extraAttr.overcomeAddPercent / 100) + ctrl.self.extra.overcomeAddPercent)) +
+				((this.extraAttr.overcomeAddPercent / 100) + (ctrl.self.extra.overcomeAddPercent / 100))) +
 			parseInt(this.extraAttr.overcomeAddBase, 10) +
 			parseInt(ctrl.self.extra.overcomeAddBase, 10);
 
