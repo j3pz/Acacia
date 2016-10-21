@@ -1,4 +1,5 @@
 const Controller = require('./libs/Controller');
+const ProgressBar = require('progress');
 
 class Jx3Simulator {
 	constructor(options) {
@@ -33,16 +34,24 @@ class Jx3Simulator {
 
 	simulator() {
 		const options = this.options;
-		setTimeout(function () {
+		const period = options.duration * 16;
+		const barOpts = {
+			width: 20,
+			total: period,
+			clear: true,
+		};
+		let lastTick = 0;
+		const bar = new ProgressBar('正在模拟： [:bar] :percent :etas', barOpts);
+		setTimeout(() => {
 			console.time('模拟完成，消耗时间');
 			console.log(`模拟时间: ${options.duration}s`);
 			const ctrl = new Controller(options);
-			let time = options.duration * 16;
-			const period = options.duration * 16;
-			while (time--) {
+			let time = 0;
+			while (time++ < period) {
+				const percentage = (time / period) * 100;
 				if (((time / period) * 100) % 5 == 0) {
-					const percentage = 100 - ((time / period) * 100);
-					console.log(`${percentage}%`);
+					bar.tick(time - lastTick);
+					lastTick = time;
 				}
 				ctrl.digest();
 			}
