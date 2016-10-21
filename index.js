@@ -23,7 +23,7 @@ class Jx3Simulator {
 			if (typeof options[key] === 'object' && !Array.isArray(options[key])) {
 				const subOption = options[key];
 				for (const subKey of Object.keys(subOption)) {
-					this.options[key][subKey] = subOption[key];
+					this.options[key][subKey] = subOption[subKey];
 				}
 			} else {
 				this.options[key] = options[key];
@@ -32,11 +32,27 @@ class Jx3Simulator {
 	}
 
 	simulator() {
-		const ctrl = new Controller(this.options);
-		let time = this.options.duration * 16;
-		while (time--) {
-			ctrl.digest();
-		}
+		const options = this.options;
+		setTimeout(function () {
+			console.time('模拟完成，消耗时间');
+			console.log(`模拟时间: ${options.duration}s`);
+			const ctrl = new Controller(options);
+			let time = options.duration * 16;
+			const period = options.duration * 16;
+			while (time--) {
+				if (((time / period) * 100) % 5 == 0) {
+					const percentage = 100 - ((time / period) * 100);
+					console.log(`${percentage}%`);
+				}
+				ctrl.digest();
+			}
+			console.timeEnd('模拟完成，消耗时间');
+			let dps = ctrl.damage / options.duration;
+			dps = dps.toFixed(0);
+			console.log(`总伤害：${ctrl.damage}`);
+			console.log(`DPS：${dps}`);
+		}, 0);
+		console.log('开始模拟');
 	}
 }
 

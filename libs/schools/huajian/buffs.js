@@ -19,7 +19,7 @@ const buffs = [
 		onSkillHitEvent(ctrl) {
 			// 放歌奇穴：“商阳指”“钟林毓秀”“兰摧玉折”每跳有 25% 几率
 			// 使下一个阳明指无需运功，持续 30 秒，可叠加 3 层。
-			if (ctrl.options[6][0].active) {
+			if (ctrl.isTalentActive('放歌')) {
 				const roll = Utils.roll();
 				if (roll < 25) {
 					const buff = ctrl.getBuff('放歌');
@@ -49,7 +49,7 @@ const buffs = [
 		onSkillHitEvent(ctrl) {
 			// 放歌奇穴：“商阳指”“钟林毓秀”“兰摧玉折”每跳有 25% 几率
 			// 使下一个阳明指无需运功，持续 30 秒，可叠加 3 层。
-			if (ctrl.options[6][0].active) {
+			if (ctrl.isTalentActive('放歌')) {
 				const roll = Utils.roll();
 				if (roll < 25) {
 					const buff = ctrl.getBuff('放歌');
@@ -79,7 +79,7 @@ const buffs = [
 		onSkillHitEvent(ctrl) {
 			// 放歌奇穴：“商阳指”“钟林毓秀”“兰摧玉折”每跳有 25% 几率
 			// 使下一个阳明指无需运功，持续 30 秒，可叠加 3 层。
-			if (ctrl.options[6][0].active) {
+			if (ctrl.isTalentActive('放歌')) {
 				const roll = Utils.roll();
 				if (roll < 25) {
 					const buff = ctrl.getBuff('放歌');

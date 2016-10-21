@@ -1,12 +1,61 @@
 const Buff = require('./Buff');
+const Skill = require('./Skill');
 const Macro = require('./Macro');
+const Utils = require('./Utils');
+
+const targetList = {
+	96: {
+		id: 0,
+		level: 96,
+		name: '初级试炼木桩(96)',
+		life: 5000000,
+		mana: 5000000,
+		curLife: 5000000,
+		hitRequire: 102.5,
+		strainRequire: 15,
+		shield: 15,
+	},
+	97: {
+		id: 1,
+		level: 97,
+		name: '中级试炼木桩(97)',
+		life: 5000000,
+		mana: 5000000,
+		curLife: 5000000,
+		hitRequire: 105,
+		strainRequire: 20,
+		shield: 25,
+	},
+	98: {
+		id: 2,
+		level: 98,
+		name: '高级试炼木桩(98)',
+		life: 5000000,
+		mana: 5000000,
+		curLife: 5000000,
+		hitRequire: 110,
+		strainRequire: 30,
+		shield: 35,
+	},
+	99: {
+		id: 3,
+		level: 99,
+		name: '极境试炼木桩(99)',
+		life: 5000000,
+		mana: 5000000,
+		curLife: 5000000,
+		hitRequire: 115,
+		strainRequire: 40,
+		shield: 40,
+	},
+};
 
 class Controller {
 	constructor(options) {
 		const school = options.school;
 		this.schoolData = {
 			buffs: require(`./schools/${school}/buffs`),		// eslint-disable-line global-require
-			skills: require(`./schools/${school}/skills`),	// eslint-disable-line global-require
+			skills: require(`./schools/${school}/skills`),		// eslint-disable-line global-require
 			recipes: require(`./schools/${school}/recipes`),	// eslint-disable-line global-require
 			talents: require(`./schools/${school}/talents`),	// eslint-disable-line global-require
 		};
@@ -18,41 +67,85 @@ class Controller {
 			list: {},
 			curSkill: null,
 		};
-		this.myself = options.self;
-		this.myself.status = {
-			ota: false,
-			otaRemain: 0,
-			curOta: 0,
-			gcd: 0,
-			curInterval: 0,
+		this.myself = {
+			attributes: options.self,
+			extra: {
+				damage: 0,
+				attackAddPercent: 0,
+				attackAddBase: 0,
+				critAddPercent: 0,
+				critAddBase: 0,
+				hitAddPercent: 0,
+				hitAddBase: 0,
+				critEffAddPercent: 0,
+				critEffAddBase: 0,
+				overcomeAddPercent: 0,
+				overcomeAddBase: 0,
+				strainAddPercent: 0,
+				strainAddBase: 0,
+				haste: 0,
+			},
+			status: {
+				ota: false,
+				otaRemain: 0,
+				curOta: 0,
+				gcd: 0,
+				curInterval: 0,
+			},
 		};
-		this.init();
+		this.target = targetList[options.target];
+		this.setting = {
+			effects: options.effects,
+		};
+		this.damage = 0;
+		this.time = 0;
+
+		this.init(options);
 		return this;
 	}
 
-	init() {
+	init(options) {
 		this.buffs = {};
 		for (const buff of this.schoolData.buffs) {
 			this.buffs[buff.name] = buff;
 		}
 		this.skills = {};
 		for (const skill of this.schoolData.skills) {
-			this.skillCtrl.list[skill.name] = skill;
+			this.skillCtrl.list[skill.name] = new Skill(skill);
 		}
+		this.talents = {};
+		for (let i = 0; i < this.schoolData.talents.length; i++) {
+			const talentGroup = this.schoolData.talents[i];
+			for (let j = 0; j < talentGroup.length; j++) {
+				const talent = talentGroup[j];
+				if (j == options.talent[i]) {
+					talent.active = true;
+				}
+				this.talents[talent.name] = talent;
+			}
+		}
+		this.recipes = this.schoolData.recipes;
 	}
 
 	isTalentActive(name) {
-		for (const activeTalent of this.config.talents) {
-			if (activeTalent.name == name) {
-				return true;
-			}
-		}
-		return false;
+		return this.talents[name].active;
 	}
 
 	getBuff(name) {
 		const buff = this.buffs[name];
-		if (buff) return buff;
+		if (buff) return new Buff(buff);
+		return false;
+	}
+
+	hasBuff(name) {
+		const buff = this.buffCtrl.selfList[name];
+		if (buff) return true;
+		return false;
+	}
+
+	hasDebuff(name) {
+		const buff = this.buffCtrl.targetList[name];
+		if (buff) return true;
 		return false;
 	}
 
@@ -77,26 +170,67 @@ class Controller {
 	addBuff(buff) {
 		if (!(buff.name in this.buffCtrl.selfList)) {
 			this.buffCtrl.selfList[buff.name] = buff;
+			this.buffCtrl.selfList[buff.name].remain = buff.duration;
 		}
 	}
 
 	addDebuff(buff) {
 		if (!(buff.name in this.buffCtrl.targetList)) {
 			this.buffCtrl.targetList[buff.name] = buff;
+			this.buffCtrl.targetList[buff.name].remain = buff.duration;
 		}
+	}
+
+	deleteSelfBuff(buff) {
+		if (buff.name in this.buffCtrl.selfList) {
+			this.buffCtrl.selfList[buff.name] = undefined;
+		}
+	}
+
+	deleteTargetBuff(buff) {
+		if (buff.name in this.buffCtrl.targetList) {
+			this.buffCtrl.targetList[buff.name] = undefined;
+		}
+	}
+
+	dotRefresh(buffName) {
+		if (buffName in this.buffCtrl.targetList) {
+			const buff = this.buffCtrl.targetList[buffName];
+			const refreshTime = buff.remain % buff.interval;
+			const selfHaste = this.myself.attributes.haste;
+			const extraHaste = this.myself.extra.haste;
+			buff.remain = (((buff.duration / buff.interval) - 1) *
+				Utils.hasteCalc(selfHaste, extraHaste, buff.interval)) +
+				Utils.hasteCalc(selfHaste, extraHaste, refreshTime);
+			buff.interval = Utils.hasteCalc(selfHaste, extraHaste, buff.interval);
+			buff.duration = Utils.hasteCalc(selfHaste, extraHaste, buff.duration);
+			if ('addedInterval' in buff) buff.addedInterval = false;
+			if (buff.recipeName != 'none') {
+				for (const recipe of this.recipes[buff.recipeName]) {
+					if (recipe.active && recipe.effect == 'debuffAdd') {
+						this.addDebuff(this.getBuff(recipe.value));
+					}
+				}
+			}
+		}
+	}
+
+	addDamage(damage) {
+		this.damage += damage * 1;
 	}
 
 	otaCtrl() {
 		if (this.myself.status.ota) {
 			this.myself.status.otaRemain--;
-			const skill = this.skillController.curSkill;
+			const skill = this.skillCtrl.curSkill;
 			if (this.myself.status.otaRemain <= 0) {
 				this.myself.status.curOta = 0;
 				this.myself.status.ota = false;
 				skill.calc(this);
 				skill.onSkillFinish(this);
 			} else if (skill.type == 'channel') {
-				if ((this.myself.status.curOta - this.myself.status.otaRemain) % this.myself.status.curInterval === 0) {
+				if ((this.myself.status.curOta - this.myself.status.otaRemain)
+					% this.myself.status.curInterval === 0) {
 					skill.calc(this);
 				}
 			}
@@ -123,7 +257,7 @@ class Controller {
 				buff.calc(this);
 			}
 			if (buff.remain <= 0) {
-				this.deleteBuff(buff.name);
+				this.deleteSelfBuff(buff.name);
 			}
 		}
 
@@ -134,7 +268,7 @@ class Controller {
 				buff.calc(this);
 			}
 			if (buff.remain <= 0) {
-				this.deleteBuff(buff.name);
+				this.deleteTargetBuff(buff.name);
 			}
 		}
 	}
@@ -195,40 +329,40 @@ class Controller {
 
 	runMacro() {
 		// /cast [tnobuff:兰摧玉折&tnobuff:钟林毓秀] 乱洒青荷
-		if (Macro.tnobuff('兰摧玉折', this) && Macro.tnobuff('钟林毓秀', this)) {
-			if (Macro.cast('乱洒青荷')) return;
+		if (Macro.tnobuff(this, '兰摧玉折') && Macro.tnobuff(this, '钟林毓秀')) {
+			if (Macro.cast(this, '乱洒青荷')) return;
 		}
 		// /cast [tnobuff:兰摧玉折&tnobuff:钟林毓秀&buff:乱洒青荷] 阳明指
-		if (Macro.tnobuff('兰摧玉折', this) && Macro.tnobuff('钟林毓秀', this)
-			&& Macro.buff('乱洒青荷', this)) {
-			if (Macro.cast('阳明指', this)) return;
+		if (Macro.tnobuff(this, '兰摧玉折') && Macro.tnobuff(this, '钟林毓秀')
+			&& Macro.buff(this, '乱洒青荷')) {
+			if (Macro.cast(this, '阳明指')) return;
 		}
 		// /cast [tnobuff:兰摧玉折] 兰摧玉折
-		if (Macro.tnobuff('兰摧玉折', this)) {
-			if (Macro.cast('兰摧玉折', this)) return;
+		if (Macro.tnobuff(this, '兰摧玉折')) {
+			if (Macro.cast(this, '兰摧玉折')) return;
 		}
 		// /cast [tnobuff:商阳指] 商阳指
-		if (Macro.tnobuff('商阳指', this)) {
-			if (Macro.cast('商阳指', this)) return;
+		if (Macro.tnobuff(this, '商阳指')) {
+			if (Macro.cast(this, '商阳指')) return;
 		}
 		// /cast [tnobuff:钟林毓秀] 阳明指
-		if (Macro.tnobuff('钟林毓秀', this)) {
-			if (Macro.cast('阳明指', this)) return;
+		if (Macro.tnobuff(this, '钟林毓秀')) {
+			if (Macro.cast(this, '阳明指')) return;
 		}
 		// /cast [bufftime:焚玉<2|nobuff:焚玉&tbuff:钟林毓秀&tbuff:兰摧玉折&tbuff:商阳指] 水月无间
-		if ((Macro.bufftime('焚玉', 2, '<', this) || Macro.nobuff('焚玉', this))
-			&& Macro.tbuff('钟林毓秀', this) && Macro.tbuff('兰摧玉折', this)
-			&& Macro.tbuff('商阳指', this)) {
-			if (Macro.cast('水月无间', this)) return;
+		if ((Macro.bufftime(this, '焚玉', 2, '<') || Macro.nobuff(this, '焚玉'))
+			&& Macro.tbuff(this, '钟林毓秀') && Macro.tbuff(this, '兰摧玉折')
+			&& Macro.tbuff(this, '商阳指')) {
+			if (Macro.cast(this, '水月无间')) return;
 		}
 		// /cast [bufftime:焚玉<2|nobuff:焚玉&tbuff:钟林毓秀&tbuff:兰摧玉折&tbuff:商阳指] 玉石俱焚
-		if ((Macro.bufftime('焚玉', 2, '<', this) || Macro.nobuff('焚玉', this))
-			&& Macro.tbuff('钟林毓秀', this) && Macro.tbuff('兰摧玉折', this)
-			&& Macro.tbuff('商阳指', this)) {
-			if (Macro.cast('玉石俱焚', this)) return;
+		if ((Macro.bufftime(this, '焚玉', 2, '<') || Macro.nobuff(this, '焚玉'))
+			&& Macro.tbuff(this, '钟林毓秀') && Macro.tbuff(this, '兰摧玉折')
+			&& Macro.tbuff(this, '商阳指')) {
+			if (Macro.cast(this, '玉石俱焚')) return;
 		}
 		// /cast 阳明指
-		if (Macro.cast('阳明指', this)) return;
+		if (Macro.cast(this, '阳明指')) return;
 	}
 
 }

@@ -1,4 +1,3 @@
-const Skill = require('../../Skill');
 const Utils = require('../../Utils');
 
 const skills = [
@@ -45,12 +44,12 @@ const skills = [
 						lancui.duration += recipe.value;
 					}
 				}
-				ctrl.addDot(lancui);
+				ctrl.addDebuff(lancui);
 				ctrl.getActiveBuff('乱洒青荷').extraSetting.firstHit = false;
 			}
 			// 寒碧奇穴：若目标身上没有“钟林毓秀”效果，则阳明指附带“钟林毓秀”，该效果每12秒触发一次。
-			if (ctrl.options[2][0].active) {
-				if (!(ctrl.hasBuff('寒碧CD')) && !(ctrl.hasDebuff('钟林毓秀'))) {
+			if (ctrl.isTalentActive('寒碧')) {
+				if (!(ctrl.hasBuff('寒碧')) && !(ctrl.hasDebuff('钟林毓秀'))) {
 					const zhonglin = ctrl.getBuff('钟林毓秀');
 					for (const recipe of ctrl.recipes.zhongLin) {
 						if (recipe.active && recipe.effect == 'durationAdd') {
@@ -61,15 +60,15 @@ const skills = [
 							ctrl.addDebuff(debuff);
 						}
 					}
-					ctrl.addDot(zhonglin);
-					const hanBiCD = ctrl.getBuff('寒碧CD');
+					ctrl.addDebuff(zhonglin);
+					const hanBiCD = ctrl.getBuff('寒碧');
 					ctrl.addBuff(hanBiCD);
 				}
 			}
 		},
 		onSkillCritEvent(ctrl) {
 			// 雪中行奇穴：“阳明指”会心后刷新目标身上所有混元持续伤害效果。
-			if (ctrl.options[11][0].active) {
+			if (ctrl.isTalentActive('雪中行')) {
 				ctrl.dotRefresh('商阳指');
 				ctrl.dotRefresh('兰摧玉折');
 				ctrl.dotRefresh('钟林毓秀');
@@ -78,7 +77,7 @@ const skills = [
 		},
 		onSkillPrepare(ctrl) {
 			// 烟霞奇穴：“阳明指”的会心几率提高10%，会心效果提高10%。
-			if (ctrl.options[1][0].active) {
+			if (ctrl.isTalentActive('烟霞')) {
 				this.extraAttr.critAddPercent += 10;
 				this.extraAttr.critEffAddPercent += 10;
 			}
@@ -89,7 +88,7 @@ const skills = [
 				const fangGe = ctrl.getActiveBuff('放歌');
 				fangGe.level--;
 				if (fangGe.level == 0) {
-					ctrl.deleteActiveBuff('放歌');
+					ctrl.deleteSelfBuff('放歌');
 				}
 			}
 			// 焚玉buff使阳明指提高20%伤害
@@ -100,7 +99,7 @@ const skills = [
 				}
 			}
 			// 青冠奇穴：“阳明指”命中有自身混元持续伤害效果的目标，每个效果使“阳明指”会心几率提高5%，会心效果提高5%。
-			if (ctrl.options[6][2].active) {
+			if (ctrl.isTalentActive('青冠')) {
 				let dotCount = 0;
 				if (ctrl.hasDebuff('商阳指') && ctrl.getActiveDebuff('商阳指').remain >= this.ota) dotCount++;
 				if (ctrl.hasDebuff('钟林毓秀') && ctrl.getActiveDebuff('钟林毓秀').remain >= this.ota) dotCount++;
@@ -123,7 +122,7 @@ const skills = [
 		},
 		onSkillFinish(ctrl) {
 			// 梦歌奇穴：施展“阳明指”或“快雪时晴”运功结束时均获得“梦歌”气劲，每层使加速率提高3%，持续30秒，最多叠加2层。
-			if (ctrl.options[10][0].active) {
+			if (ctrl.isTalentActive('梦歌')) {
 				const mengGe = ctrl.getBuff('梦歌');
 				ctrl.addBuff(mengGe);
 			}
@@ -163,17 +162,17 @@ const skills = [
 				}
 			}
 			// 生息奇穴：混元性持续伤害提高10%，持续伤害效果被卸除后，每个持续伤害使目标1.5秒内无法受到治疗效果，最多叠加4.5秒。
-			if (ctrl.options[9][0].active) {
+			if (ctrl.isTalentActive('生息')) {
 				shangYang.extraAttr.damage += 10;
 			}
-			ctrl.addDot(shangYang);
+			ctrl.addDebuff(shangYang);
 		},
 		onSkillCritEvent(ctrl) {
 			this.onSkillHitEvent(ctrl);
 		},
 		onSkillPrepare(ctrl) {
 			// 寒血奇穴：“施展“商阳指”立刻造成伤害
-			if (ctrl.options[2][1].active) {
+			if (ctrl.isTalentActive('寒血')) {
 				this.damageInstant = true;
 			}
 		},
@@ -205,25 +204,25 @@ const skills = [
 				const dot = ctrl.getActiveDebuff('商阳指');
 				const remainHit = Math.floor(dot.remain / dot.interval) + 1;
 				const damage = dot.calc(ctrl);
-				ctrl.deleteActiveDebuff('商阳指');
+				ctrl.deleteTargetBuff('商阳指');
 				dotCount++;
 			}
 			if (ctrl.hasDebuff('钟林毓秀')) {
 				const dot = ctrl.getActiveDebuff('钟林毓秀');
 				const remainHit = Math.floor(dot.remain / dot.interval) + 1;
 				const damage = dot.calc(ctrl);
-				delete ctrl.getActiveDebuff('钟林毓秀');
+				ctrl.deleteTargetBuff('钟林毓秀');
 				dotCount++;
 			}
 			if (ctrl.hasDebuff('兰摧玉折')) {
 				const dot = ctrl.getActiveDebuff('兰摧玉折');
 				const remainHit = Math.floor(dot.remain / dot.interval) + 1;
 				const damage = dot.calc(ctrl);
-				delete ctrl.getActiveDebuff('兰摧玉折');
+				ctrl.deleteTargetBuff('兰摧玉折');
 				dotCount++;
 			}
 			// 焚玉奇穴：“玉石俱焚”成功吞噬持续伤害效果，使阳明指伤害提高10%，每额外吞噬一个效果，持续时间增加5秒。
-			if (ctrl.options[5][0].active && dotCount > 0) {
+			if (ctrl.isTalentActive('焚玉') && dotCount > 0) {
 				if (ctrl.hasBuff('焚玉')) {
 					ctrl.getActiveBuff('焚玉').remain += dotCount * 80;
 				} else {
@@ -233,16 +232,16 @@ const skills = [
 				}
 			}
 			// 清流奇穴：玉石俱焚”施展后使自身内功破防等级提高15%，持续18秒。
-			if (ctrl.options[7][1].active) {
+			if (ctrl.isTalentActive('清流')) {
 				const qingLiu = ctrl.getBuff('清流');
 				ctrl.addBuff(qingLiu);
 			}
 			// 旋落奇穴：“玉石俱焚”每吞噬一个持续伤害效果，调息时间降低1.5秒。
-			if (ctrl.options[8][0].active && dotCount > 0) {
+			if (ctrl.isTalentActive('旋落') && dotCount > 0) {
 				this.cd -= (dotCount * 24);
 			}
 			// 流离奇穴：“玉石俱焚”命中目标后使自身下一个“兰摧玉折”无需运功。
-			if (ctrl.options[9][1].active) {
+			if (ctrl.isTalentActive('流离')) {
 				const liuLi = ctrl.getBuff('流离');
 				ctrl.addBuff(liuLi);
 			}
@@ -282,7 +281,7 @@ const skills = [
 				}
 			}
 			// 踏歌奇穴：“快雪时晴”命中有自身持续伤害效果的目标，每次伤害有15%几率使持续伤害效果增加2跳，每个持续效果最多作用一次
-			if (ctrl.options[6][1].active) {
+			if (ctrl.isTalentActive('踏歌')) {
 				let roll = Utils.roll();
 				if (ctrl.hasDebuff('商阳指') && roll < 15) {
 					ctrl.dotAddInterval('商阳指', 2);
@@ -302,12 +301,12 @@ const skills = [
 		},
 		onSkillPrepare(ctrl) {
 			// 弹指奇穴：“快雪时晴”的会心几率提高10%，会心效果提高10%。
-			if (ctrl.options[1][1].active) {
+			if (ctrl.isTalentActive('弹指')) {
 				this.extraAttr.critAddPercent += 10;
 				this.extraAttr.critEffAddPercent += 10;
 			}
 			// 青歌奇穴：“快雪时晴”每0.6秒造成一次伤害，持续3秒。
-			if (ctrl.options[3][0].active) {
+			if (ctrl.isTalentActive('青歌')) {
 				this.ota = 50;
 				this.interval = 10;
 			} else {
@@ -315,7 +314,7 @@ const skills = [
 				this.interval = 16;
 			}
 			// 雪弃奇穴：“快雪时晴”若只命中一个目标，伤害提高20%。
-			if (ctrl.options[8][1].active) {
+			if (ctrl.isTalentActive('雪弃')) {
 				this.extraAttr.damage += 20;
 			}
 			// 落凤
@@ -333,7 +332,7 @@ const skills = [
 		},
 		onSkillFinish(ctrl) {
 			// 梦歌奇穴：施展“阳明指”或“快雪时晴”运功结束时均获得“梦歌”气劲，每层使加速率提高3%，持续30秒，最多叠加2层。
-			if (ctrl.options[10][0].active) {
+			if (ctrl.isTalentActive('梦歌')) {
 				const mengGe = ctrl.getBuff('梦歌');
 				ctrl.addBuff(mengGe);
 			}
@@ -370,10 +369,10 @@ const skills = [
 				}
 			}
 			// 生息奇穴：混元性持续伤害提高10%，持续伤害效果被卸除后，每个持续伤害使目标1.5秒内无法受到治疗效果，最多叠加4.5秒。
-			if (ctrl.options[9][0].active) {
+			if (ctrl.isTalentActive('生息')) {
 				zhongLin.extraAttr.damage += 10;
 			}
-			ctrl.addDot(zhongLin);
+			ctrl.addDebuff(zhongLin);
 		},
 		onSkillCritEvent(ctrl) {
 			this.onSkillHitEvent(ctrl);
@@ -411,10 +410,10 @@ const skills = [
 				}
 			}
 			// 生息奇穴：混元性持续伤害提高10%，持续伤害效果被卸除后，每个持续伤害使目标1.5秒内无法受到治疗效果，最多叠加4.5秒。
-			if (ctrl.options[9][0].active) {
+			if (ctrl.isTalentActive('生息')) {
 				lanCui.extraAttr.damage += 10;
 			}
-			ctrl.addDot(lanCui);
+			ctrl.addDebuff(lanCui);
 		},
 		onSkillCritEvent(ctrl) {
 			this.onSkillHitEvent(ctrl);
@@ -424,7 +423,7 @@ const skills = [
 			if (ctrl.hasBuff('流离')) {
 				this.ota = 0;
 				this.type = 'instant';
-				ctrl.deleteActiveBuff('流离');
+				ctrl.deleteSelfBuff('流离');
 			}
 		},
 		onSkillFinish(ctrl) {
@@ -451,7 +450,7 @@ const skills = [
 		gcdCast: false,
 		onSkillHitEvent(ctrl) {
 			// 轻弃奇穴：“芙蓉并蒂”的伤害提高100%，命中目标后刷新目标身上的所有混元持续伤害效果。
-			if (ctrl.options[5][2].active) {
+			if (ctrl.isTalentActive('轻弃')) {
 				ctrl.dotRefresh('商阳指');
 				ctrl.dotRefresh('兰摧玉折');
 				ctrl.dotRefresh('钟林毓秀');
@@ -462,11 +461,11 @@ const skills = [
 		},
 		onSkillPrepare(ctrl) {
 			// 轻弃奇穴：“芙蓉并蒂”的伤害提高100%，命中目标后刷新目标身上的所有混元持续伤害效果。
-			if (ctrl.options[5][2].active) {
+			if (ctrl.isTalentActive('轻弃')) {
 				this.extraAttr.damage += 100;
 			}
 			// 踏莲奇穴：“芙蓉并蒂”调息时间降低5秒，定身效果持续时间延迟1秒。
-			if (ctrl.options[11][1].active) {
+			if (ctrl.isTalentActive('踏莲')) {
 				this.cd = 240;
 			}
 		},
@@ -495,7 +494,7 @@ const skills = [
 		onSkillHitEvent(ctrl) {
 			const shuiYue = ctrl.getBuff('水月无间');
 			// 夜思奇穴：“水月无间”额外使1个招式无需运功，并立刻回复自身10%内力值。
-			if (ctrl.options[7][0].active) {
+			if (ctrl.isTalentActive('夜思')) {
 				shuiYue.canStack = true;
 				shuiYue.maxLevel = true;
 				shuiYue.level = 2;
@@ -504,7 +503,7 @@ const skills = [
 			const buSan = ctrl.getBuff('布散');
 			ctrl.addBuff(buSan);
 			// 砚悬奇穴：“水月无间”效果期间下一个伤害或治疗招式必定会心。
-			if (ctrl.options[10][2].active) {
+			if (ctrl.isTalentActive('砚悬')) {
 				const yanXuan = ctrl.getBuff('砚悬');
 				ctrl.addBuff(yanXuan);
 			}
@@ -543,14 +542,14 @@ const skills = [
 			const luanSa = ctrl.getBuff('乱洒青荷');
 			ctrl.addBuff(luanSa);
 			// 取消技能GCD
-			ctrl.myself.states.gcd = 0;
+			ctrl.myself.status.gcd = 0;
 		},
 		onSkillCritEvent(ctrl) {
 			this.onSkillHitEvent(ctrl);
 		},
 		onSkillPrepare(ctrl) {
 			// 奇穴技能检测
-			if (!ctrl.options[7][3].active) {
+			if (!ctrl.isTalentActive('乱洒青荷')) {
 				this.type = 'invalid';
 			}
 		},

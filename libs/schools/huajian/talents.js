@@ -1,5 +1,5 @@
-const wanhuaTalent = {
-	1: [
+const wanhuaTalent = [
+	[
 		{
 			name: '烟霞',
 			desc: '“阳明指”的会心几率提高10%，会心效果提高10%。',
@@ -22,7 +22,7 @@ const wanhuaTalent = {
 			active: false,
 		},
 	],
-	2: [
+	[
 		{
 			name: '寒碧',
 			desc: '若目标身上没有“钟林毓秀”效果，则阳明指附带“钟林毓秀”，该效果每12秒触发一次。',
@@ -45,7 +45,7 @@ const wanhuaTalent = {
 			active: false,
 		},
 	],
-	3: [
+	[
 		{
 			name: '青歌',
 			desc: '“快雪时晴”每0.6秒造成一次伤害，持续3秒。',
@@ -75,7 +75,7 @@ const wanhuaTalent = {
 			active: false,
 		},
 	],
-	4: [
+	[
 		{
 			name: '束发',
 			desc: '“快雪时晴”作用目标增加3个。',
@@ -105,7 +105,7 @@ const wanhuaTalent = {
 			active: false,
 		},
 	],
-	5: [
+	[
 		{
 			name: '焚玉',
 			desc: '“玉石俱焚”成功吞噬持续伤害效果，使阳明指伤害提高20%，每额外吞噬一个效果，持续时间增加5秒。',
@@ -135,7 +135,7 @@ const wanhuaTalent = {
 			active: false,
 		},
 	],
-	6: [
+	[
 		{
 			name: '放歌',
 			desc: '“商阳指”“钟林毓秀”“兰摧玉折”每跳有25%几率使下一个阳明指无需运功，持续30秒，可叠加3层。',
@@ -165,7 +165,7 @@ const wanhuaTalent = {
 			active: false,
 		},
 	],
-	7: [
+	[
 		{
 			name: '夜思',
 			desc: '“水月无间”额外使1个招式无需运功，并立刻回复自身10%内力值。',
@@ -195,7 +195,7 @@ const wanhuaTalent = {
 			active: false,
 		},
 	],
-	8: [
+	[
 		{
 			name: '旋落',
 			desc: '“玉石俱焚”每吞噬一个持续伤害效果，调息时间降低1.5秒。',
@@ -225,7 +225,7 @@ const wanhuaTalent = {
 			active: false,
 		},
 	],
-	9: [
+	[
 		{
 			name: '生息',
 			desc: '混元性持续伤害提高10%，持续伤害效果被卸除后，每个持续伤害使目标1.5秒内无法受到治疗效果，最多叠加4.5秒。',
@@ -255,7 +255,7 @@ const wanhuaTalent = {
 			active: false,
 		},
 	],
-	10: [
+	[
 		{
 			name: '梦歌',
 			desc: '施展“阳明指”或“快雪时晴”运功结束时均获得“梦歌”气劲，每层使加速率提高3%，持续30秒，最多叠加2层。',
@@ -285,7 +285,7 @@ const wanhuaTalent = {
 			active: false,
 		},
 	],
-	11: [
+	[
 		{
 			name: '雪中行',
 			desc: '“阳明指”会心后刷新目标身上所有混元持续伤害效果。',
@@ -315,7 +315,7 @@ const wanhuaTalent = {
 			active: false,
 		},
 	],
-	12: [
+	[
 		{
 			name: '涓流',
 			desc: '施展伤害招式命中气血值低于35%的目标，自身会心几率提高20%，会心效果提高20%，每次造成伤害，该效果降低2%。',
@@ -345,6 +345,6 @@ const wanhuaTalent = {
 			active: false,
 		},
 	],
-};
+];
 
 module.exports = wanhuaTalent;
