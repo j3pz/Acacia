@@ -174,10 +174,10 @@ const wanhuaTalent = {
 			active: false,
 		},
 		{
-			name: '青致',
-			desc: '被“太阴指”命中的目标，锁足3秒。',
-			skill: '太阴指',
-			icon: 1515,
+			name: '清流',
+			desc: '“玉石俱焚”施展后使自身内功破防等级提高15%，持续18秒。',
+			skill: '玉石俱焚',
+			icon: 3017,
 			active: false,
 		},
 		{

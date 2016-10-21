@@ -232,6 +232,11 @@ const skills = [
 					ctrl.addBuff(fenYu);
 				}
 			}
+			// 清流奇穴：玉石俱焚”施展后使自身内功破防等级提高15%，持续18秒。
+			if (ctrl.options[7][1].active) {
+				const qingLiu = ctrl.getBuff('清流');
+				ctrl.addBuff(qingLiu);
+			}
 			// 旋落奇穴：“玉石俱焚”每吞噬一个持续伤害效果，调息时间降低1.5秒。
 			if (ctrl.options[8][0].active && dotCount > 0) {
 				this.cd -= (dotCount * 24);

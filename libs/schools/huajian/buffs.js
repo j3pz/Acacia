@@ -369,6 +369,28 @@ const buffs = [
 		onSkillCritEvent(ctrl) {
 		},
 	},
+	{
+		icon: 3017,
+		name: '清流',
+		desc: '内功破防等级提高15%',
+		type: 1,
+		conflict: 0,
+		duration: 288,
+		interval: 0,
+		cof: 0,
+		maxLevel: 1,
+		canStack: false,
+		min: 0,
+		max: 0,
+		data: {
+			overcomeAddPercent: 15,
+		},
+		recipeName: 'none',
+		onSkillHitEvent(ctrl) {
+		},
+		onSkillCritEvent(ctrl) {
+		},
+	},
 ];
 
 module.exports = buffs;
