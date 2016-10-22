@@ -1,5 +1,6 @@
 const Controller = require('./libs/Controller');
 const ProgressBar = require('progress');
+// const Then = require('thenjs');
 
 class Jx3Simulator {
 	constructor(options) {
@@ -62,6 +63,23 @@ class Jx3Simulator {
 			console.log(`DPS：${dps}`);
 		}, 0);
 		console.log('开始模拟');
+	}
+
+	debug() {
+		const options = this.options;
+		const period = options.duration * 16;
+		const ctrl = new Controller(options);
+		let time = 0;
+		const loop = setInterval(() => {
+			ctrl.digest();
+			time++;
+			if (time >= period) {
+				clearInterval(loop);
+				let dps = ctrl.damage / options.duration;
+				dps = dps.toFixed(0);
+				console.log(dps);
+			}
+		}, 62.5);
 	}
 }
 
