@@ -14,6 +14,12 @@ const wanhuaUtils = {
 			ctrl.addBuff(juanliu);
 		}
 	},
+	generalSkillPrepare(ctrl, skill) {
+		if (ctrl.hasBuff('水月无间') && skill.type == 'ota') {
+			skill.type = 'instant';
+			ctrl.getActiveBuff('水月无间').level --;
+		}
+	},
 };
 
 module.exports = wanhuaUtils;
