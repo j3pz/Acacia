@@ -49,7 +49,7 @@ class Jx3Simulator {
 			let time = 0;
 			while (time++ < period) {
 				const percentage = (time / period) * 100;
-				if (((time / period) * 100) % 5 == 0) {
+				if (percentage % 5 == 0) {
 					bar.tick(time - lastTick);
 					lastTick = time;
 				}
