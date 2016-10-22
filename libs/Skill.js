@@ -1,9 +1,9 @@
-const Utils = require('./Utils');
+const _ = require('lodash');
 
 class Skill {
 	constructor(data) {
 		this.cdRemain = 0;
-		this.extraAttr = {
+		this.fixAttr = {
 			damage: 0,
 			attackAddPercent: 0,
 			attackAddBase: 0,
@@ -25,49 +25,38 @@ class Skill {
 	}
 
 	cleanExtra() {
-		this.extraAttr = {
-			damage: 0,
-			attackAddPercent: 0,
-			attackAddBase: 0,
-			critAddPercent: 0,
-			critAddBase: 0,
-			hitAddPercent: 0,
-			hitAddBase: 0,
-			critEffAddPercent: 0,
-			critEffAddBase: 0,
-			overcomeAddPercent: 0,
-			overcomeAddBase: 0,
-			strainAddPercent: 0,
-			strainAddBase: 0,
-		};
+		this.extraAttr = _.clone(this.fixAttr);
 	}
 
 	applyRecipe(ctrl) {
-		for (let i = 0; i < ctrl.recipes.length; i++) {
-			if (ctrl.recipes[i].active) {
-				switch (ctrl.recipes[i].effect) {
-				case 'frameMinus':
-					this.ota = this.ota - ctrl.recipes[i].value;
-					break;
-				case 'damageAddPercent':
-					this.extraAttr.damage = this.extraAttr.damage + ctrl.recipes[i].value;
-					break;
-				case 'costMinusPercent':
-					// this.cost
-					break;
-				case 'critAddPercent':
-					this.extraAttr.critAddPercent = this.extraAttr.critAddPercent + ctrl.recipes[i].value;
-					break;
-				case 'cdMinus':
-					this.cd = this.cd - ctrl.recipes[i].value;
-					break;
-				case 'hitAddPercent':
-					this.extraAttr.hitAddPercent = this.extraAttr.hitAddPercent + ctrl.recipes[i].value;
-					break;
-				default:
-					break;
+		if (this.hasRecipes) {
+			for (const recipe of ctrl.recipes[this.recipeName]) {
+				if (recipe.active) {
+					switch (recipe.effect) {
+					case 'frameMinus':
+						this.ota = this.ota - recipe.value;
+						break;
+					case 'damageAddPercent':
+						this.fixAttr.damage = this.fixAttr.damage + recipe.value;
+						break;
+					case 'costMinusPercent':
+							// this.cost
+						break;
+					case 'critAddPercent':
+						this.fixAttr.critAddPercent = this.fixAttr.critAddPercent + recipe.value;
+						break;
+					case 'cdMinus':
+						this.cd = this.cd - recipe.value;
+						break;
+					case 'hitAddPercent':
+						this.fixAttr.hitAddPercent = this.fixAttr.hitAddPercent + recipe.value;
+						break;
+					default:
+						break;
+					}
 				}
 			}
+			this.cleanExtra();
 		}
 	}
 
@@ -188,11 +177,11 @@ class Skill {
 		} else {
 			damage = 0;
 		}
-		const status = (flag.miss > 0 ? '偏离' : '') + (flag.insight > 0 ? '识破' : '') +
-			(flag.crit > 0 ? '会心' : '') + (flag.hit > 0 ? '命中' : '');
+		const status = (flag.miss > 0 ? 'miss' : '') + (flag.insight > 0 ? 'insight' : '') +
+			(flag.crit > 0 ? 'crit' : '') + (flag.hit > 0 ? 'hit' : '');
 		log = `${this.name} ${status} ${damage}`;
-		Utils.logln(log);
-		ctrl.addDamage(damage);
+		// Utils.logln(log);
+		ctrl.log(this.name, status, damage);
 		return damage;
 	}
 }

@@ -1,4 +1,5 @@
 const Utils = require('./Utils');
+const _ = require('lodash');
 
 class Macro {
 	// 宏指令
@@ -23,6 +24,7 @@ class Macro {
 	static fcast(ctrl, skillName) {
 		// 强行释放技能
 		const skill = ctrl.getSkill(skillName);
+		const skillParam = _.clone(skill);
 
 		if (!skill || skill.cdRemain > 0) {
 			return false;
@@ -32,36 +34,36 @@ class Macro {
 		// 清除特殊加成
 		skill.cleanExtra();
 		// 执行门派通用的技能准备，例如免读条等
-		// ctrl.generalSkillPrepare();
+		ctrl.schoolData.utils.generalSkillPrepare(ctrl, skillParam);
 		skill.onSkillPrepare(ctrl);
-		if (skill.type == 'invalid') {
+		if (skillParam.type == 'invalid') {
 			return false;
 		}
 
-		if (skill.type == 'ota') {
+		if (skillParam.type == 'ota') {
 			roleStatus.ota = true;
 			ctrl.skillCtrl.curSkill = skill;
 			roleStatus.curOta = Utils.hasteCalc(ctrl.myself.attributes.haste,
-				ctrl.myself.extra.haste, skill.ota);
+				ctrl.myself.extra.haste, skillParam.ota);
 			roleStatus.otaRemain = roleStatus.curOta;
 			roleStatus.gcd = Utils.hasteCalc(ctrl.myself.attributes.haste,
 				ctrl.myself.extra.haste, 24);
 			return true;
-		} else if (skill.type == 'instant') {
+		} else if (skillParam.type == 'instant') {
 			roleStatus.ota = false;
 			roleStatus.gcd = Utils.hasteCalc(ctrl.myself.attributes.haste,
 				ctrl.myself.extra.haste, 24);
 			skill.calc(ctrl);
 			skill.onSkillFinish(ctrl);
 			return true;
-		} else if (skill.type == 'channel') {
+		} else if (skillParam.type == 'channel') {
 			roleStatus.ota = true;
 			ctrl.skillCtrl.curSkill = skill;
 			roleStatus.curOta = Utils.hasteCalc(ctrl.myself.attributes.haste,
-				ctrl.myself.extra.haste, skill.interval) * (skill.ota / skill.interval);
+				ctrl.myself.extra.haste, skillParam.interval) * (skillParam.ota / skillParam.interval);
 			roleStatus.otaRemain = roleStatus.curOta;
 			roleStatus.curInterval = Utils.hasteCalc(ctrl.myself.attributes.haste,
-				ctrl.myself.extra.haste, skill.interval);
+				ctrl.myself.extra.haste, skillParam.interval);
 			roleStatus.gcd = Utils.hasteCalc(ctrl.myself.attributes.haste,
 				ctrl.myself.extra.haste, 24);
 			return true;

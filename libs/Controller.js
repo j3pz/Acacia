@@ -100,12 +100,20 @@ class Controller {
 		};
 		this.damage = 0;
 		this.time = 0;
+		this.logs = {};
 
 		this.init(options);
 		return this;
 	}
 
 	init(options) {
+		this.recipes = this.schoolData.recipes;
+		for (const key of Object.keys(options.recipes)) {
+			for (let i = 0; i < options.recipes[key].length; i++) {
+				const recipeId = options.recipes[key][i];
+				this.recipes[key][recipeId].active = true;
+			}
+		}
 		this.buffs = {};
 		for (const buff of this.schoolData.buffs) {
 			this.buffs[buff.name] = buff;
@@ -113,6 +121,7 @@ class Controller {
 		this.skills = {};
 		for (const skill of this.schoolData.skills) {
 			this.skillCtrl.list[skill.name] = new Skill(skill);
+			this.skillCtrl.list[skill.name].applyRecipe(this);
 		}
 		this.talents = {};
 		for (let i = 0; i < this.schoolData.talents.length; i++) {
@@ -123,13 +132,6 @@ class Controller {
 					talent.active = true;
 				}
 				this.talents[talent.name] = talent;
-			}
-		}
-		this.recipes = this.schoolData.recipes;
-		for (const key of Object.keys(options.recipes)) {
-			for (let i = 0; i < options.recipes[key].length; i++) {
-				const recipeId = options.recipes[key][i];
-				this.recipes[key][recipeId].active = true;
 			}
 		}
 	}
@@ -271,7 +273,7 @@ class Controller {
 			if ((buff.duration - buff.remain) % buff.interval === 0 && buff.type == 'dot') {
 				buff.calc(this);
 			}
-			if (buff.remain <= 0) {
+			if (buff.remain <= 0 || buff.level <= 0) {
 				this.deleteSelfBuff(buff.name);
 			}
 		}
@@ -282,7 +284,7 @@ class Controller {
 			if ((buff.duration - buff.remain) % buff.interval === 0 && buff.type == 'dot') {
 				buff.calc(this);
 			}
-			if (buff.remain <= 0) {
+			if (buff.remain <= 0 || buff.level <= 0) {
 				this.deleteTargetBuff(buff.name);
 			}
 		}
@@ -323,6 +325,32 @@ class Controller {
 				}
 			}
 		}
+	}
+
+	log(skillName, status, damage) {
+		if (!this.logs[skillName]) {
+			this.logs[skillName] = {
+				count: 0,
+				name: skillName,
+				damage: 0,
+				hit: { count: 0, max: 0, min: 999999, damage: 0 },
+				insight: { count: 0, max: 0, min: 999999, damage: 0 },
+				miss: { count: 0, max: 0, min: 999999, damage: 0 },
+				crit: { count: 0, max: 0, min: 999999, damage: 0 },
+			};
+		}
+		this.logs[skillName].count ++;
+		this.logs[skillName].damage += damage * 1;
+		this.logs[skillName][status].count ++;
+		this.logs[skillName][status].damage += damage * 1;
+
+		if (damage <= this.logs[skillName][status].min) {
+			this.logs[skillName][status].min = damage;
+		}
+		if (damage > this.logs[skillName][status].max) {
+			this.logs[skillName][status].max = damage;
+		}
+		this.addDamage(damage);
 	}
 
 	digest() {
