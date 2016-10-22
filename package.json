@@ -27,6 +27,9 @@
     "eslint-plugin-react": "^6.0.0"
   },
   "dependencies": {
-    "progress": "^1.1.8"
+    "lodash": "^4.16.4",
+    "paralleljs": "^0.2.1",
+    "progress": "^1.1.8",
+    "thenjs": "^2.0.4"
   }
 }
