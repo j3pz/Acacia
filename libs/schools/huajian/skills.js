@@ -36,7 +36,7 @@ const skills = [
 						ctrl.addDebuff(debuff);
 					}
 				}
-				ctrl.addBuff(zhonglin);
+				ctrl.addDebuff(zhonglin);
 				// 添加兰摧玉折
 				const lancui = ctrl.getBuff('兰摧玉折');
 				for (const recipe of ctrl.recipes.lanCui) {
@@ -203,21 +203,21 @@ const skills = [
 			if (ctrl.hasDebuff('商阳指')) {
 				const dot = ctrl.getActiveDebuff('商阳指');
 				const remainHit = Math.floor(dot.remain / dot.interval) + 1;
-				const damage = dot.calc(ctrl);
+				dot.calc(ctrl, remainHit);
 				ctrl.deleteTargetBuff('商阳指');
 				dotCount++;
 			}
 			if (ctrl.hasDebuff('钟林毓秀')) {
 				const dot = ctrl.getActiveDebuff('钟林毓秀');
 				const remainHit = Math.floor(dot.remain / dot.interval) + 1;
-				const damage = dot.calc(ctrl);
+				dot.calc(ctrl, remainHit);
 				ctrl.deleteTargetBuff('钟林毓秀');
 				dotCount++;
 			}
 			if (ctrl.hasDebuff('兰摧玉折')) {
 				const dot = ctrl.getActiveDebuff('兰摧玉折');
 				const remainHit = Math.floor(dot.remain / dot.interval) + 1;
-				const damage = dot.calc(ctrl);
+				dot.calc(ctrl, remainHit);
 				ctrl.deleteTargetBuff('兰摧玉折');
 				dotCount++;
 			}
@@ -342,7 +342,7 @@ const skills = [
 	{
 		icon: 404,
 		name: '钟林毓秀',
-		type: 0,
+		type: 'ota',
 		cof: 0.29,
 		ota: 32,
 		canCastSkill: 0,
@@ -386,7 +386,7 @@ const skills = [
 	{
 		icon: 390,
 		name: '兰摧玉折',
-		type: 0,
+		type: 'ota',
 		cof: 0.26,
 		min: 30,
 		max: 30,

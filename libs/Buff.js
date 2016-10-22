@@ -26,7 +26,11 @@ class Buff {
 		return this;
 	}
 
-	calc(ctrl) {
+	calc(ctrl, multiHit) {
+		let dotHit = 1;
+		if (multiHit) {
+			dotHit = multiHit;
+		}
 		// 面板攻击 = 基础攻击 + 最受益属性 * 最受益属性加成 * (Buff 攻击百分比加成 + 自身攻击百分比加成) + Buff 攻击加成 + 自身攻击加成
 		const attack = parseInt(ctrl.myself.attributes.basicAttack, 10) +
 			(ctrl.myself.attributes.spunk * 1.95 *						// TODO: 支持多心法最受益属性
@@ -102,7 +106,7 @@ class Buff {
 		damage = damage * (1 + (onFightAttr.overcome / 3616.925)) *
 			(1 - (ctrl.target.shield / 100)) *
 			(1 + (onFightAttr.damageAddPercent / 100));
-		damage = damage.toFixed(0) * this.level;
+		damage = damage.toFixed(0) * dotHit;
 		const status = (flag.insight ? '识破' : '') + (flag.crit ? '会心' : '') + (flag.hit ? '命中' : '');
 		const log = `${this.name}(buff) ${status} ${damage}`;
 

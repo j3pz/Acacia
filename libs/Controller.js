@@ -128,7 +128,8 @@ class Controller {
 		this.recipes = this.schoolData.recipes;
 		for (const key of Object.keys(options.recipes)) {
 			for (let i = 0; i < options.recipes[key].length; i++) {
-				this.recipes[key][i].active = true;
+				const recipeId = options.recipes[key][i];
+				this.recipes[key][recipeId].active = true;
 			}
 		}
 	}
@@ -176,26 +177,34 @@ class Controller {
 	addBuff(buff) {
 		if (!(buff.name in this.buffCtrl.selfList)) {
 			this.buffCtrl.selfList[buff.name] = buff;
-			this.buffCtrl.selfList[buff.name].remain = buff.duration;
+		} else {
+			const existBuff = this.buffCtrl.selfList[buff.name];
+			const level = Math.min(existBuff.level + 1, existBuff.maxLevel);
+			this.buffCtrl.selfList[buff.name].level = level;
 		}
+		this.buffCtrl.selfList[buff.name].remain = buff.duration;
 	}
 
 	addDebuff(buff) {
 		if (!(buff.name in this.buffCtrl.targetList)) {
 			this.buffCtrl.targetList[buff.name] = buff;
-			this.buffCtrl.targetList[buff.name].remain = buff.duration;
+		} else {
+			const existBuff = this.buffCtrl.targetList[buff.name];
+			const level = Math.min(existBuff.level + 1, existBuff.maxLevel);
+			this.buffCtrl.targetList[buff.name].level = level;
 		}
+		this.buffCtrl.targetList[buff.name].remain = buff.duration;
 	}
 
 	deleteSelfBuff(buff) {
-		if (buff.name in this.buffCtrl.selfList) {
-			this.buffCtrl.selfList[buff.name] = undefined;
+		if (buff in this.buffCtrl.selfList) {
+			delete this.buffCtrl.selfList[buff];
 		}
 	}
 
 	deleteTargetBuff(buff) {
-		if (buff.name in this.buffCtrl.targetList) {
-			this.buffCtrl.targetList[buff.name] = undefined;
+		if (buff in this.buffCtrl.targetList) {
+			delete this.buffCtrl.targetList[buff];
 		}
 	}
 
@@ -298,6 +307,15 @@ class Controller {
 		};
 		for (const buffKey of Object.keys(this.buffCtrl.selfList)) {
 			const buff = this.buffCtrl.selfList[buffKey];
+			if (buff.type == 'buff') {
+				for (const key of Object.keys(buff.data)) {
+					const buffNumber = buff.data[key];
+					this.myself.extra[key] += buffNumber * buff.level;
+				}
+			}
+		}
+		for (const buffKey of Object.keys(this.buffCtrl.targetList)) {
+			const buff = this.buffCtrl.targetList[buffKey];
 			if (buff.type == 'buff') {
 				for (const key of Object.keys(buff.data)) {
 					const buffNumber = buff.data[key];
