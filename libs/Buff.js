@@ -107,11 +107,11 @@ class Buff {
 			(1 - (ctrl.target.shield / 100)) *
 			(1 + (onFightAttr.damageAddPercent / 100));
 		damage = damage.toFixed(0) * dotHit;
-		const status = (flag.insight ? '识破' : '') + (flag.crit ? '会心' : '') + (flag.hit ? '命中' : '');
+		const status = (flag.insight ? 'insight' : '') + (flag.crit ? 'crit' : '') + (flag.hit ? 'hit' : '');
 		const log = `${this.name}(buff) ${status} ${damage}`;
 
 		Utils.logln(log);
-		ctrl.addDamage(damage);
+		ctrl.log(this.name, status, damage);
 		return damage;
 	}
 }
