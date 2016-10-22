@@ -1,6 +1,6 @@
 class Utils {
 	static logln(s) {
-		console.log(s);
+		// console.log(s);
 	}
 
 	static hasteCalc(haste, extraHaste, frame) {

@@ -106,7 +106,7 @@ class Buff {
 		const status = (flag.insight ? '识破' : '') + (flag.crit ? '会心' : '') + (flag.hit ? '命中' : '');
 		const log = `${this.name}(buff) ${status} ${damage}`;
 
-		// Utils.logln(log);
+		Utils.logln(log);
 		ctrl.addDamage(damage);
 		return damage;
 	}

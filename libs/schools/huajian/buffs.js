@@ -94,7 +94,7 @@ const buffs = [
 	{
 		icon: 1527,
 		name: '恣游',
-		desc: '恣游',
+		desc: '每层使混元内功基础攻击力提高2%',
 		type: 'buff',
 		conflict: 0,
 		duration: 320,
@@ -116,7 +116,7 @@ const buffs = [
 	{
 		icon: 1672,
 		name: '噬骨',
-		desc: '噬骨',
+		desc: '每层受混元性内功伤害提高2%',
 		type: 'buff',
 		conflict: 0,
 		duration: 240,
@@ -138,7 +138,7 @@ const buffs = [
 	{
 		icon: 408,
 		name: '寒碧',
-		desc: '寒碧',
+		desc: '“寒碧”的效果不能触发',
 		type: 1,
 		conflict: 0,
 		duration: 192,
@@ -158,7 +158,7 @@ const buffs = [
 	{
 		icon: 411,
 		name: '焚玉',
-		desc: '焚玉',
+		desc: '“阳明指”伤害提高20%',
 		type: 1,
 		conflict: 0,
 		duration: 80,
@@ -178,7 +178,7 @@ const buffs = [
 	{
 		icon: 3015,
 		name: '放歌',
-		desc: '放歌',
+		desc: '使下一个“阳明指”无须运功',
 		type: 1,
 		conflict: 0,
 		duration: 480,
@@ -198,7 +198,7 @@ const buffs = [
 	{
 		icon: 1522,
 		name: '水月无间',
-		desc: '水月无间',
+		desc: '下一个伤害或疗伤运功招式无需运功，效果期间免疫控制和封内效果',
 		type: 1,
 		conflict: 0,
 		duration: 96,
@@ -218,7 +218,7 @@ const buffs = [
 	{
 		icon: 327,
 		name: '布散',
-		desc: '布散',
+		desc: '招式造成的威胁降低60%，混元内功基础攻击力和基础疗伤成效提高30%',
 		type: 1,
 		conflict: 0,
 		duration: 160,
@@ -240,7 +240,7 @@ const buffs = [
 	{
 		icon: 3001,
 		name: '乱洒青荷',
-		desc: '乱洒青荷',
+		desc: '效果期间下一个阳明指同时附带“兰摧玉折”“钟林毓秀”效果',
 		type: 1,
 		conflict: 0,
 		duration: 160,
@@ -263,7 +263,7 @@ const buffs = [
 	{
 		icon: 3002,
 		name: '流离',
-		desc: '流离',
+		desc: '施展“阳明指”无需运功',
 		type: 1,
 		conflict: 0,
 		duration: 480,
@@ -283,7 +283,7 @@ const buffs = [
 	{
 		icon: 4528,
 		name: '梦歌',
-		desc: '梦歌',
+		desc: '每层提高加速率3%',
 		type: 1,
 		conflict: 0,
 		duration: 480,
@@ -305,7 +305,7 @@ const buffs = [
 	{
 		icon: 1522,
 		name: '砚悬',
-		desc: '砚悬',
+		desc: '下一伤害招式会心几率提高100%',
 		type: 1,
 		conflict: 0,
 		duration: 96,
@@ -327,7 +327,7 @@ const buffs = [
 	{
 		icon: 7468,
 		name: '涓流',
-		desc: '涓流',
+		desc: '会心几率提高2%，会心效果提高2%',
 		type: 1,
 		conflict: 0,
 		duration: 96,
@@ -350,7 +350,7 @@ const buffs = [
 	{
 		icon: 15,
 		name: '怒叱',
-		desc: '怒叱',
+		desc: '混元内功基础攻击力提高10%',
 		type: 1,
 		conflict: 0,
 		duration: 96,
@@ -385,6 +385,139 @@ const buffs = [
 		data: {
 			overcomeAddPercent: 15,
 		},
+		recipeName: 'none',
+		onSkillHitEvent(ctrl) {
+		},
+		onSkillCritEvent(ctrl) {
+		},
+	},
+	{
+		icon: 3412,
+		name: '水·灭虚',
+		desc: '命中则获得一层buff，每层提高内功基础攻击，最多可叠加10层',
+		type: 1,
+		conflict: 1,
+		duration: 96,
+		interval: 0,
+		cof: 0,
+		maxLevel: 10,
+		canStack: true,
+		min: 0,
+		max: 0,
+		data: {
+			attackAddBase: 7,
+		},
+		recipeName: 'none',
+		onSkillHitEvent(ctrl) {
+		},
+		onSkillCritEvent(ctrl) {
+		},
+	},
+	{
+		icon: 3412,
+		name: '水·无双',
+		desc: '命中则获得一层buff，每层提高无双等级，最多可叠加10层',
+		type: 1,
+		conflict: 1,
+		duration: 96,
+		interval: 0,
+		cof: 0,
+		maxLevel: 10,
+		canStack: true,
+		min: 0,
+		max: 0,
+		data: {
+			strainAddBase: 8,
+		},
+		recipeName: 'none',
+		onSkillHitEvent(ctrl) {
+		},
+		onSkillCritEvent(ctrl) {
+		},
+	},
+	{
+		icon: 3406,
+		name: '雷·激流',
+		desc: '提高自身内功基础攻击和全会心等级，持续15秒',
+		type: 1,
+		conflict: 1,
+		duration: 240,
+		interval: 0,
+		cof: 0,
+		maxLevel: 1,
+		canStack: false,
+		min: 0,
+		max: 0,
+		data: {
+			attackAddBase: 94,
+			critAddBase: 48,
+		},
+		recipeName: 'none',
+		onSkillHitEvent(ctrl) {
+		},
+		onSkillCritEvent(ctrl) {
+		},
+	},
+	{
+		icon: 3406,
+		name: '雷·灭气',
+		desc: '提高自身内功破防等级和全会心等级，持续15秒',
+		type: 1,
+		conflict: 1,
+		duration: 240,
+		interval: 0,
+		cof: 0,
+		maxLevel: 1,
+		canStack: false,
+		min: 0,
+		max: 0,
+		data: {
+			overcomeAddBase: 112,
+			critAddBase: 48,
+		},
+		recipeName: 'none',
+		onSkillHitEvent(ctrl) {
+		},
+		onSkillCritEvent(ctrl) {
+		},
+	},
+	{
+		icon: 3406,
+		name: '雷·痛切',
+		desc: '提高自身会心效果等级和全会心等级，持续15秒',
+		type: 1,
+		conflict: 1,
+		duration: 240,
+		interval: 0,
+		cof: 0,
+		maxLevel: 1,
+		canStack: false,
+		min: 0,
+		max: 0,
+		data: {
+			critEffAddBase: 112,
+			critAddBase: 48,
+		},
+		recipeName: 'none',
+		onSkillHitEvent(ctrl) {
+		},
+		onSkillCritEvent(ctrl) {
+		},
+	},
+	{
+		icon: 3406,
+		name: '雷特效CD',
+		desc: '雷特效CD',
+		type: 1,
+		conflict: 1,
+		duration: 960,
+		interval: 0,
+		cof: 0,
+		maxLevel: 1,
+		canStack: false,
+		min: 0,
+		max: 0,
+		data: {},
 		recipeName: 'none',
 		onSkillHitEvent(ctrl) {
 		},

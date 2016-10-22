@@ -58,6 +58,7 @@ class Controller {
 			skills: require(`./schools/${school}/skills`),		// eslint-disable-line global-require
 			recipes: require(`./schools/${school}/recipes`),	// eslint-disable-line global-require
 			talents: require(`./schools/${school}/talents`),	// eslint-disable-line global-require
+			utils: require(`./schools/${school}/utils`),	// eslint-disable-line global-require
 		};
 		this.buffCtrl = {
 			selfList: {},
@@ -125,6 +126,11 @@ class Controller {
 			}
 		}
 		this.recipes = this.schoolData.recipes;
+		for (const key of Object.keys(options.recipes)) {
+			for (let i = 0; i < options.recipes[key].length; i++) {
+				this.recipes[key][i].active = true;
+			}
+		}
 	}
 
 	isTalentActive(name) {
@@ -318,13 +324,13 @@ class Controller {
 		this.extraAttributeApply();
 		// dps 计算
 		this.time++;
-		if (this.time % 16 === 0) {
-			this.dps = (this.globalDamage / this.time) * 16;
-			if (this.kill) this.target.curLife = this.target.life - this.globalDamage;
-			if (this.target.curLife <= 0) {
-				this.stop();
-			}
-		}
+		// if (this.time % 16 === 0) {
+		// 	this.dps = (this.globalDamage / this.time) * 16;
+		// 	if (this.kill) this.target.curLife = this.target.life - this.globalDamage;
+		// 	if (this.target.curLife <= 0) {
+		// 		this.stop();
+		// 	}
+		// }
 	}
 
 	runMacro() {

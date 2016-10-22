@@ -72,6 +72,7 @@ class Skill {
 	}
 
 	calc(ctrl) {
+		this.applyRecipe(ctrl);
 		// 面板攻击 = 基础攻击 + 最受益属性 * 最受益属性加成 * (Buff 攻击百分比加成 + 自身攻击百分比加成) + Buff 攻击加成 + 自身攻击加成
 		const attack = parseInt(ctrl.myself.attributes.basicAttack, 10) +
 			(ctrl.myself.attributes.spunk * 1.95 *						// TODO: 支持多心法最受益属性
@@ -122,7 +123,7 @@ class Skill {
 		missRate = parseFloat(missRate < 0 ? 0 : missRate);
 		let insightRate = strainRequire - onFightAttr.strain;
 		insightRate = parseFloat(insightRate < 0 ? 0 : insightRate);
-		const roll = Math.random() * 100;
+		let roll = Math.random() * 100;
 		const flag = {
 			miss: false,
 			insight: false,
@@ -147,27 +148,29 @@ class Skill {
 			this.onSkillHitEvent(ctrl);
 		}
 
-		if ((!flag.miss) && (ctrl.target.curLife / ctrl.target.life) < 0.35) {
-			// TODO: 斩杀控制
+		if ((!flag.miss) &&
+			(ctrl.target.curLife / ctrl.target.life) < ctrl.schoolData.utils.killLevel) {
+			ctrl.schoolData.utils.kill(ctrl);
 		}
 		// 水雷特效触发
 		if (!flag.miss && this.damageInstant) {
-			// // 水特效触发
-			// if ($rootScope.effects.water !== 0) {
-			// 	Utils.addBuff(Buff.getBuffById($rootScope.effects.water), onFightAttr);
-			// }
-			// // 雷特效触发
-			// if ($rootScope.effects.thunder !== 0) {
-			// 	const leiCD = $rootScope.originalBuffList.leiCD;
-			// 	if (leiCD.id in buffController.selfBuffs) {}
-			// 	else {
-			// 		roll = Math.random() * 100;
-			// 		if (roll < 10) {
-			// 			Utils.addBuff(Buff.getBuffById($rootScope.effects.thunder), onFightAttr);
-			// 			Utils.addBuff(leiCD, onFightAttr);
-			// 		}
-			// 	}
-			// }
+			// 水特效触发
+			if (ctrl.setting.effects.water !== 0) {
+				const water = ctrl.getBuff(ctrl.setting.effects.water);
+				ctrl.addBuff(water);
+			}
+			// 雷特效触发
+			if (ctrl.setting.effects.thunder !== 0) {
+				if (!ctrl.hasBuff('雷特效CD')) {
+					roll = Math.random() * 100;
+					if (roll < 10) {
+						const leiCD = ctrl.getBuff('雷特效CD');
+						const thunder = ctrl.getBuff(ctrl.setting.effects.thunder);
+						ctrl.addBuff(leiCD);
+						ctrl.addBuff(thunder);
+					}
+				}
+			}
 		}
 		this.cdRemain = this.cd;
 		let log = '';
@@ -188,7 +191,7 @@ class Skill {
 		const status = (flag.miss > 0 ? '偏离' : '') + (flag.insight > 0 ? '识破' : '') +
 			(flag.crit > 0 ? '会心' : '') + (flag.hit > 0 ? '命中' : '');
 		log = `${this.name} ${status} ${damage}`;
-		// Utils.logln(log);
+		Utils.logln(log);
 		ctrl.addDamage(damage);
 		return damage;
 	}
