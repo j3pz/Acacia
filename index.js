@@ -1,6 +1,7 @@
 const Controller = require('./libs/Controller');
 const ProgressBar = require('progress');
 const Thenjs = require('thenjs');
+const workerFarm = require('worker-farm');
 
 class Jx3Simulator {
 	constructor(options) {
@@ -33,7 +34,15 @@ class Jx3Simulator {
 		}
 	}
 
-	simulator() {
+	run() {
+		if (this.options.iterator > 1) {
+			this.multipleSimulation();
+		} else {
+			this.oneSimulation();
+		}
+	}
+
+	oneSimulation() {
 		const options = this.options;
 		const period = options.duration * 16;
 		const barOpts = {
@@ -65,44 +74,25 @@ class Jx3Simulator {
 		console.log('开始模拟');
 	}
 
-	simulators() {
+	multipleSimulation() {
+		const workers = workerFarm(require.resolve('./libs/task'));
+		let ret = 0;
 		const options = this.options;
-		const period = options.duration * 16;
-		const barOpts = {
-			width: 20,
-			total: options.iterator,
-			clear: true,
-		};
-		const bar = new ProgressBar('正在模拟： [:bar] :percent :etas', barOpts);
-		console.time('模拟完成，消耗时间');
+		const results = [];
+		function resultCollector(err, result) {
+			results.push(result * 1);
+			if (++ret == options.iterator) {
+				workerFarm.end(workers);
+				const dps = results.reduce((a, b) => a + b) / ret;
+				console.log(`DPS: ${dps}`);
+				console.timeEnd('多线程模拟，消耗时间');
+			}
+		}
+		console.time('多线程模拟，消耗时间');
 		console.log(`开始模拟，模拟时间${options.duration}s，模拟次数${options.iterator}次`);
-		function instance(opt, callback) {
-			setTimeout(() => {
-				let time = 0;
-				const ctrl = new Controller(opt);
-				while (time++ < period) {
-					ctrl.digest();
-				}
-				let dps = ctrl.damage / options.duration;
-				dps = dps.toFixed(0);
-				bar.tick(1);
-				callback(null, parseInt(dps, 10));
-			}, 0);
-		}
-
-		const taskList = [];
 		for (let i = 0; i < options.iterator; i++) {
-			taskList.push(options);
+			workers(options, resultCollector);
 		}
-
-		Thenjs.eachLimit(taskList, (cont, opt) => {
-			instance(opt, cont);
-		}, 10).then((cont, result) => {
-			const sum = result.reduce((a, b) => a + b);
-			const avg = (sum / taskList.length).toFixed(0);
-			console.log(`DPS:${avg}`);
-			console.timeEnd('模拟完成，消耗时间');
-		});
 	}
 }
 
