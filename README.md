@@ -59,8 +59,11 @@ acacia.run();
 
 如果你进行的是单次长时间模拟，将会看到控制台如下输出：
 
+![single](https://cloud.githubusercontent.com/assets/8521174/19627394/b20e270a-9991-11e6-9d31-3007c4fa50b6.gif)
+
 如果是多次模拟，将会看到控制台如下输出：
 
+<img src="https://cloud.githubusercontent.com/assets/8521174/19627396/bd448812-9991-11e6-9b2a-73a727411903.png" width="320"></img>
 
 ## 详细文档
 ### 设置 Config
