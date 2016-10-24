@@ -67,10 +67,133 @@ acacia.run();
 
 ## 详细文档
 ### 设置 Config
-编写中...
+ * **config** 定义了模拟所需要的参数
+   * **config.school** `string` 表示模拟的心法名称，以心法的前两个字的全拼为名。目前 Acacia 仅支持 huajian (花间游)。
+   * **config.duration** `number` 表示单次模拟的时常，单位为秒。默认 300 秒。
+   * **config.iterator** `number` 表示模拟的次数，默认 5 次。
+   * **config.target** `number` 表示模拟所针对的目标，目前的取值为木桩等级，默认 98 级木桩。
+   * **config.self** `object` 表示模拟时角色自身的属性，该属性不应该包含任何可以由自身触发的战斗增益属性。例如花间不应该将梦歌或清流的属性加入，但可以加入破苍穹的属性。
+     * **config.self.basicAttack** `number` 角色基础攻击。
+     * **config.self.spunk** `number` 角色基础属性·元气 (四选一)。
+     * **config.self.spirit** `number` 角色基础属性·根骨 (四选一)。
+     * **config.self.strength** `number` 角色基础属性·力道 (四选一)。
+     * **config.self.agility** `number` 角色基础属性·身法 (四选一)。
+     * **config.self.crit** `number` 角色会心率。
+     * **config.self.critEff** `number` 角色会心效果率。
+     * **config.self.hit** `number` 角色命中率。
+     * **config.self.haste** `number` 角色加速等级。
+     * **config.self.strain** `number` 角色无双率。
+     * **config.self.overcome** `number` 角色破防等级。
+     * **config.self.delay** `number` 角色平均延迟水平。
+   * **config.effects** `object` 表示角色身上装备所带有的特效
+     * **config.effects.cw** `number` 0 表示没有橙武，1 表示小橙武，2 表示大橙武。
+     * **config.effects.water** `string` 水系特效，取值为水系的特效名称，没有特效用 0 表示。
+     * **config.effects.thunder** `string` 雷系特效，取值为雷系的特效名称，没有特效用 0 表示。
+     * **config.effects.setEffect** `array` 套装特效，元素为套装特效名称，类型为 `string`。
+   * **config.talent** `array` 表示角色所选取的奇穴，数组长度为 12，按顺序表明第几层奇穴的第几个奇穴被激活。例如，`[0, 0, 1, ...]` 表示第一、二层的第一个奇穴被激活，第三层的第二个奇穴被激活。
+   * **config.recipes** 'object' 表示角色所选取的秘籍。该对象与各心法有关，详情查阅对应心法的文档。
 
-### 控制器 Controller
-编写中...
+### 控制器 API
+以下示例代码中，`ctrl` 为一个控制器实例。
+#### addBuff(buff: Buff)
+向控制器自身 Buff 列表中添加一个 Buff，该 Buff 在游戏中应该出现在角色自己身上。该方法的参数为一个 Buff 对象。该方法可用于刷新一个自身 Buff，并增加层数（如果没有到达最大层数）。
+```javascript
+// 阳明指命中后添加一层恣游buff
+const ziyou = ctrl.getBuff('恣游');
+ctrl.addBuff(ziyou);
+```
+
+#### addDebuff(buff: Buff)
+向控制器目标 Buff 列表中添加一个 Buff，该 Buff 在游戏中应该出现在目标身上。该方法的参数为一个 Buff 对象。该方法可用于刷新一个目标 Buff，并增加层数（如果没有到达最大层数）。dot 的刷新需要使用 `dotRefresh` 方法
+```javascript
+// 添加噬骨
+const shigu = ctrl.getBuff('噬骨');
+ctrl.addDebuff(shigu);
+```
+
+#### deleteBuff(buffName: string)
+从控制器自身 Buff 列表中移除一个 Buff，参数为 Buff 的名称。
+```javascript
+// 流离奇穴使兰摧不需运功
+ctrl.deleteBuff('流离');
+```
+
+#### deleteDebuff(buffName: string)
+从控制器目标 Buff 列表中移除一个 Buff，参数为 Buff 的名称。如果该 Buff 为持续伤害技能，该方法目前不会自动计算其伤害。
+```javascript
+// 玉石俱焚吞噬 dot
+ctrl.deleteDebuff('商阳指');
+ctrl.deleteDebuff('钟林毓秀');
+ctrl.deleteDebuff('兰摧玉折');
+```
+
+#### dotRefresh(buffName: string)
+刷新一个 dot。
+```javascript
+if (ctrl.isTalentActive('轻弃')) {
+    ctrl.dotRefresh('商阳指');
+    ctrl.dotRefresh('兰摧玉折');
+    ctrl.dotRefresh('钟林毓秀');
+}
+```
+
+#### getActiveBuff(buffName: string)
+获得一个正在角色自身身上生效的 Buff 的状态。如果该 Buff 存在，则返回这个 Buff 本身，反之则返回 false。
+```javascript
+const fenYu = ctrl.getActiveBuff('焚玉');
+const remainTime = fenyu.remain; // 获取焚玉剩余时间
+```
+
+#### getActiveDebuff(buffName: string)
+获得一个正在目标身上生效的 Buff 的状态。如果该 Buff 存在，则返回这个 Buff 本身，反之则返回 false。
+```javascript
+const shangYang = ctrl.getActiveDebuff('商阳指');
+const remainTime  = shangYang.remain; // 获取商阳指剩余时间
+```
+
+#### getBuff(buffName: string)
+从技能库中获取一个 Buff 对象。如果该 Buff 存在，则返回这个 Buff 本身，反之则返回 false。该方法会获得一个全新的 Buff，可用于前述的 `addBuff` 和 `addDebuff` 方法。如需要获取正在生效的 Buff 状态，需要使用 `getActiveBuff` 和 `getActiveDebuff` 方法。
+```javascript
+// 阳明指命中后添加一层恣游buff
+const ziyou = ctrl.getBuff('恣游');
+ctrl.addBuff(ziyou);
+```
+
+#### getSkill(skillName: string)
+获取一个技能的状态。如果该技能存在，则返回这个技能本身，反之则返回 false。该方法可用于获取技能的 CD，状态，并对其进行修改以达到重置技能 CD，或改变其能力的功能。
+```javascript
+const yushi = ctrl.getSkill('玉石俱焚');
+yushi.cdRemain = 0; // 重置玉石俱焚CD
+```
+#### hasBuff(buffName: string)
+查看自身是否存在某个 Buff。
+```javascript
+// 乱洒添加DOT
+if(ctrl.hasBuff('乱洒青荷')){
+    const zhonglin = ctrl.getBuff('钟林毓秀');
+    ctrl.addDebuff(zhonglin);
+}
+```
+
+#### hasDebuff(buffName: string)
+查看目标是否存在某个 Buff。
+```javascript
+// 青冠奇穴
+if (ctrl.hasDebuff('商阳指')){
+    // 提高阳明指伤害
+};
+```
+
+#### isTalentActive(name: string)
+查看某个奇穴是否被激活。激活则返回 true。
+```javascript
+// 梦歌奇穴
+if (ctrl.isTalentActive('梦歌')) {
+    const mengGe = ctrl.getBuff('梦歌');
+    ctrl.addBuff(mengGe);
+}
+```
+
 
 ## 贡献
 欢迎 PR。

@@ -136,46 +136,14 @@ class Controller {
 		}
 	}
 
-	isTalentActive(name) {
-		return this.talents[name].active;
-	}
-
-	getBuff(name) {
-		const buff = this.buffs[name];
-		if (buff) return new Buff(buff);
-		return false;
-	}
-
-	hasBuff(name) {
-		const buff = this.buffCtrl.selfList[name];
-		if (buff) return true;
-		return false;
-	}
-
-	hasDebuff(name) {
-		const buff = this.buffCtrl.targetList[name];
-		if (buff) return true;
-		return false;
-	}
-
-	getSkill(name) {
-		const skill = this.skillCtrl.list[name];
-		if (skill) return skill;
-		return false;
-	}
-
-	getActiveBuff(name) {
-		const buff = this.buffCtrl.selfList[name];
-		if (buff) return buff;
-		return false;
-	}
-
-	getActiveDebuff(name) {
-		const buff = this.buffCtrl.targetList[name];
-		if (buff) return buff;
-		return false;
-	}
-
+	// 控制器接口方法
+	/**
+	 * 向控制器自身 Buff 列表中添加一个 Buff
+	 *
+	 * @param {Buff} buff 一个 Buff 对象
+	 *
+	 * @memberOf Controller
+	 */
 	addBuff(buff) {
 		if (!(buff.name in this.buffCtrl.selfList)) {
 			this.buffCtrl.selfList[buff.name] = buff;
@@ -187,6 +155,13 @@ class Controller {
 		this.buffCtrl.selfList[buff.name].remain = buff.duration;
 	}
 
+	/**
+	 * 向控制器目标 Buff 列表中添加一个 Buff
+	 *
+	 * @param {Buff} buff 一个 Buff 对象
+	 *
+	 * @memberOf Controller
+	 */
 	addDebuff(buff) {
 		if (!(buff.name in this.buffCtrl.targetList)) {
 			this.buffCtrl.targetList[buff.name] = buff;
@@ -198,18 +173,39 @@ class Controller {
 		this.buffCtrl.targetList[buff.name].remain = buff.duration;
 	}
 
-	deleteSelfBuff(buff) {
-		if (buff in this.buffCtrl.selfList) {
-			delete this.buffCtrl.selfList[buff];
+	/**
+	 * 从控制器自身 Buff 列表中删除一个 Buff
+	 *
+	 * @param {string} buffName Buff 的名称
+	 *
+	 * @memberOf Controller
+	 */
+	deleteBuff(buffName) {
+		if (buffName in this.buffCtrl.selfList) {
+			delete this.buffCtrl.selfList[buffName];
 		}
 	}
 
-	deleteTargetBuff(buff) {
-		if (buff in this.buffCtrl.targetList) {
-			delete this.buffCtrl.targetList[buff];
+	/**
+	 * 从控制器目标 Buff 列表中删除一个 Buff
+	 *
+	 * @param {string} buffName Buff 的名称
+	 *
+	 * @memberOf Controller
+	 */
+	deleteDebuff(buffName) {
+		if (buffName in this.buffCtrl.targetList) {
+			delete this.buffCtrl.targetList[buffName];
 		}
 	}
 
+	/**
+	 * 刷新一个 dot。
+	 *
+	 * @param {string} buffName Buff 的名称
+	 *
+	 * @memberOf Controller
+	 */
 	dotRefresh(buffName) {
 		if (buffName in this.buffCtrl.targetList) {
 			const buff = this.buffCtrl.targetList[buffName];
@@ -230,6 +226,102 @@ class Controller {
 				}
 			}
 		}
+	}
+
+	/**
+	 * 获得一个正在生效的 Buff 的状态。
+	 *
+	 * @param {string} buffName Buff 的名称
+	 * @returns {Buff|boolean} 如果该 Buff 存在，则返回这个 Buff，反之返回 false。
+	 *
+	 * @memberOf Controller
+	 */
+	getActiveBuff(buffName) {
+		const buff = this.buffCtrl.selfList[buffName];
+		if (buff) return buff;
+		return false;
+	}
+
+	/**
+	 *获得一个正在目标身上生效的 Buff 的状态。
+	 *
+	 * @param {string} buffName Buff 的名称
+	 * @returns {Buff|boolean} 如果该 Buff 存在，则返回这个 Buff，反之返回 false。
+	 *
+	 * @memberOf Controller
+	 */
+	getActiveDebuff(buffName) {
+		const buff = this.buffCtrl.targetList[buffName];
+		if (buff) return buff;
+		return false;
+	}
+
+	/**
+	 * 从技能库中获取一个 Buff 对象
+	 *
+	 * @param {string} buffName Buff 的名称
+	 * @returns {Buff|boolean} 如果该 Buff 存在，则返回这个 Buff，反之返回 false。
+	 *
+	 * @memberOf Controller
+	 */
+	getBuff(buffName) {
+		const buff = this.buffs[buffName];
+		if (buff) return new Buff(buff);
+		return false;
+	}
+
+	/**
+	 * 获取一个技能的状态。
+	 *
+	 * @param {string} skillName 技能的名称
+	 * @returns 如果该技能存在，则返回这个技能本身，反之则返回 false
+	 *
+	 * @memberOf Controller
+	 */
+	getSkill(skillName) {
+		const skill = this.skillCtrl.list[skillName];
+		if (skill) return skill;
+		return false;
+	}
+
+	/**
+	 * 查看自身是否存在某个 Buff
+	 *
+	 * @param {string} buffName Buff 的名称
+	 * @returns {boolean} 存在则返回 true，反之 false。
+	 *
+	 * @memberOf Controller
+	 */
+	hasBuff(buffName) {
+		const buff = this.buffCtrl.selfList[buffName];
+		if (buff) return true;
+		return false;
+	}
+
+	/**
+	 * 查看目标是否存在某个 Buff
+	 *
+	 * @param {string} buffName Buff 的名称
+	 * @returns 存在则返回 true，反之 false。
+	 *
+	 * @memberOf Controller
+	 */
+	hasDebuff(buffName) {
+		const buff = this.buffCtrl.targetList[buffName];
+		if (buff) return true;
+		return false;
+	}
+
+	/**
+	 * 查看某个奇穴是否被激活
+	 *
+	 * @param {string} name 奇穴名称
+	 * @returns {boolean} 返回激活的状态
+	 *
+	 * @memberOf Controller
+	 */
+	isTalentActive(name) {
+		return this.talents[name].active;
 	}
 
 	addDamage(damage) {
@@ -274,7 +366,7 @@ class Controller {
 				buff.calc(this);
 			}
 			if (buff.remain <= 0 || buff.level <= 0) {
-				this.deleteSelfBuff(buff.name);
+				this.deleteBuff(buff.name);
 			}
 		}
 
@@ -285,7 +377,7 @@ class Controller {
 				buff.calc(this);
 			}
 			if (buff.remain <= 0 || buff.level <= 0) {
-				this.deleteTargetBuff(buff.name);
+				this.deleteDebuff(buff.name);
 			}
 		}
 	}
