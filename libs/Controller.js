@@ -400,7 +400,7 @@ class Controller {
 		for (const buffKey of Object.keys(this.buffCtrl.selfList)) {
 			const buff = this.buffCtrl.selfList[buffKey];
 			buff.remain--;
-			if ((buff.duration - buff.remain) % buff.interval === 0 && buff.type == 'dot') {
+			if (buff.type == 'dot' && (buff.duration - buff.remain) % buff.interval === 0) {
 				buff.calc(this);
 			}
 			if (buff.remain <= 0 || buff.level <= 0) {
@@ -411,7 +411,7 @@ class Controller {
 		for (const buffKey of Object.keys(this.buffCtrl.targetList)) {
 			const buff = this.buffCtrl.targetList[buffKey];
 			buff.remain--;
-			if ((buff.duration - buff.remain) % buff.interval === 0 && buff.type == 'dot') {
+			if (buff.type == 'dot' && (buff.duration - buff.remain) % buff.interval === 0) {
 				buff.calc(this);
 			}
 			if (buff.remain <= 0 || buff.level <= 0) {
