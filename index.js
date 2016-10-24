@@ -82,7 +82,8 @@ class Jx3Simulator {
 			results.push(result * 1);
 			if (++ret == options.iterator) {
 				workerFarm.end(workers);
-				const dps = results.reduce((a, b) => a + b) / ret;
+				let dps = results.reduce((a, b) => a + b) / ret;
+				dps = parseInt(dps, 10);
 				console.log(`DPS: ${dps}`);
 				console.timeEnd('多线程模拟，消耗时间');
 			}
