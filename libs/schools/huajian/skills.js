@@ -88,7 +88,7 @@ const skills = [
 				const fangGe = ctrl.getActiveBuff('放歌');
 				fangGe.level--;
 				if (fangGe.level == 0) {
-					ctrl.deleteSelfBuff('放歌');
+					ctrl.deleteBuff('放歌');
 				}
 			}
 			// 焚玉buff使阳明指提高20%伤害
@@ -204,21 +204,21 @@ const skills = [
 				const dot = ctrl.getActiveDebuff('商阳指');
 				const remainHit = Math.floor(dot.remain / dot.interval) + 1;
 				dot.calc(ctrl, remainHit);
-				ctrl.deleteTargetBuff('商阳指');
+				ctrl.deleteDebuff('商阳指');
 				dotCount++;
 			}
 			if (ctrl.hasDebuff('钟林毓秀')) {
 				const dot = ctrl.getActiveDebuff('钟林毓秀');
 				const remainHit = Math.floor(dot.remain / dot.interval) + 1;
 				dot.calc(ctrl, remainHit);
-				ctrl.deleteTargetBuff('钟林毓秀');
+				ctrl.deleteDebuff('钟林毓秀');
 				dotCount++;
 			}
 			if (ctrl.hasDebuff('兰摧玉折')) {
 				const dot = ctrl.getActiveDebuff('兰摧玉折');
 				const remainHit = Math.floor(dot.remain / dot.interval) + 1;
 				dot.calc(ctrl, remainHit);
-				ctrl.deleteTargetBuff('兰摧玉折');
+				ctrl.deleteDebuff('兰摧玉折');
 				dotCount++;
 			}
 			// 焚玉奇穴：“玉石俱焚”成功吞噬持续伤害效果，使阳明指伤害提高10%，每额外吞噬一个效果，持续时间增加5秒。
@@ -423,7 +423,7 @@ const skills = [
 			if (ctrl.hasBuff('流离')) {
 				this.ota = 0;
 				this.type = 'instant';
-				ctrl.deleteSelfBuff('流离');
+				ctrl.deleteBuff('流离');
 			}
 		},
 		onSkillFinish(ctrl) {

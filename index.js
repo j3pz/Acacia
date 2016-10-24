@@ -1,6 +1,5 @@
 const Controller = require('./libs/Controller');
 const ProgressBar = require('progress');
-const Thenjs = require('thenjs');
 const workerFarm = require('worker-farm');
 
 class Jx3Simulator {
