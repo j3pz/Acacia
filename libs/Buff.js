@@ -26,6 +26,43 @@ class Buff {
 		return this;
 	}
 
+	updateTime(ctrl) {
+		const diff = ctrl.time - this.checkTime;
+		const lastRemain = this.remain;
+		this.remain -= diff;
+		this.checkTime = ctrl.time;
+		this.remain = this.remain >= 0 ? this.remain : 0;
+		if (this.type == 'dot') {
+			const lastRemainHit = (this.duration - lastRemain) / this.interval;
+			const nowRemainHit = (this.duration - this.remain) / this.interval;
+			let hit = lastRemainHit - nowRemainHit;
+			hit = Math.floor(hit);
+			while (hit-- > 0) {
+				this.calc(ctrl);
+			}
+		}
+		if (this.remain <= 0 || this.level <= 0) {
+			ctrl.deleteBuff(this.name);
+			ctrl.deleteDebuff(this.name);
+			return false;
+		}
+		return true;
+	}
+
+	applyRecipe(ctrl) {
+		if (this.recipeName && this.recipeName != 'none') {
+			for (const recipe of ctrl.recipes[this.recipeName]) {
+				if (recipe.active && recipe.effect == 'durationAdd') {
+					this.duration += recipe.value;
+				}
+				if (recipe.active && recipe.effect == 'debuffAdd') {
+					const debuff = ctrl.getBuff(recipe.value);
+					ctrl.addDebuff(debuff);
+				}
+			}
+		}
+	}
+
 	calc(ctrl, multiHit) {
 		let dotHit = 1;
 		if (multiHit) {

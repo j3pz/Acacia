@@ -27,15 +27,7 @@ const skills = [
 			if (ctrl.hasBuff('乱洒青荷') && ctrl.getActiveBuff('乱洒青荷').extraSetting.firstHit) {
 				// 添加钟林毓秀
 				const zhonglin = ctrl.getBuff('钟林毓秀');
-				for (const recipe of ctrl.recipes.zhongLin) {
-					if (recipe.active && recipe.effect == 'durationAdd') {
-						zhonglin.duration += recipe.value;
-					}
-					if (recipe.active && recipe.effect == 'debuffAdd') {
-						const debuff = ctrl.getBuff(recipe.value);
-						ctrl.addDebuff(debuff);
-					}
-				}
+				zhonglin.applyRecipe(ctrl);
 				ctrl.addDebuff(zhonglin);
 				// 添加兰摧玉折
 				const lancui = ctrl.getBuff('兰摧玉折');
@@ -51,15 +43,7 @@ const skills = [
 			if (ctrl.isTalentActive('寒碧')) {
 				if (!(ctrl.hasBuff('寒碧')) && !(ctrl.hasDebuff('钟林毓秀'))) {
 					const zhonglin = ctrl.getBuff('钟林毓秀');
-					for (const recipe of ctrl.recipes.zhongLin) {
-						if (recipe.active && recipe.effect == 'durationAdd') {
-							zhonglin.duration += recipe.value;
-						}
-						if (recipe.active && recipe.effect == 'debuffAdd') {
-							const debuff = ctrl.getBuff(recipe.value);
-							ctrl.addDebuff(debuff);
-						}
-					}
+					zhonglin.applyRecipe(ctrl);
 					ctrl.addDebuff(zhonglin);
 					const hanBiCD = ctrl.getBuff('寒碧');
 					ctrl.addBuff(hanBiCD);
@@ -150,17 +134,7 @@ const skills = [
 		onSkillHitEvent(ctrl) {
 			// 添加商阳指dot
 			const shangYang = ctrl.getBuff('商阳指');
-			// 噬骨判定
-			const hasShigu = ctrl.getActiveDebuff('噬骨');
-			for (const recipe of ctrl.recipes.shangYang) {
-				if (recipe.active && recipe.effect == 'durationAdd') {
-					shangYang.duration += recipe.value;
-				}
-				if (recipe.active && recipe.effect == 'debuffAdd' && !hasShigu) {
-					const debuff = ctrl.getBuff(recipe.value);
-					ctrl.addDebuff(debuff);
-				}
-			}
+			shangYang.applyRecipe(ctrl);
 			// 生息奇穴：混元性持续伤害提高10%，持续伤害效果被卸除后，每个持续伤害使目标1.5秒内无法受到治疗效果，最多叠加4.5秒。
 			if (ctrl.isTalentActive('生息')) {
 				shangYang.extraAttr.damage += 10;
@@ -360,14 +334,7 @@ const skills = [
 		onSkillHitEvent(ctrl) {
 			// 添加钟林毓琇dot
 			const zhongLin = ctrl.getBuff('钟林毓秀');
-			for (const recipe of ctrl.recipes.zhongLin) {
-				if (recipe.active && recipe.effect == 'durationAdd') {
-					zhongLin.duration += recipe.value;
-				}
-				if (recipe.active && recipe.effect == 'debuffAdd') {
-					ctrl.addDebuff(ctrl.getBuff(recipe.value));
-				}
-			}
+			zhongLin.applyRecipe(ctrl);
 			// 生息奇穴：混元性持续伤害提高10%，持续伤害效果被卸除后，每个持续伤害使目标1.5秒内无法受到治疗效果，最多叠加4.5秒。
 			if (ctrl.isTalentActive('生息')) {
 				zhongLin.extraAttr.damage += 10;
@@ -404,11 +371,7 @@ const skills = [
 		onSkillHitEvent(ctrl) {
 			// 添加兰摧dot
 			const lanCui = ctrl.getBuff('兰摧玉折');
-			for (const recipe of ctrl.recipes.lanCui) {
-				if (recipe.active && recipe.effect == 'durationAdd') {
-					lanCui.duration += recipe.value;
-				}
-			}
+			lanCui.applyRecipe(ctrl);
 			// 生息奇穴：混元性持续伤害提高10%，持续伤害效果被卸除后，每个持续伤害使目标1.5秒内无法受到治疗效果，最多叠加4.5秒。
 			if (ctrl.isTalentActive('生息')) {
 				lanCui.extraAttr.damage += 10;
@@ -496,7 +459,7 @@ const skills = [
 			// 夜思奇穴：“水月无间”额外使1个招式无需运功，并立刻回复自身10%内力值。
 			if (ctrl.isTalentActive('夜思')) {
 				shuiYue.canStack = true;
-				shuiYue.maxLevel = true;
+				shuiYue.maxLevel = 2;
 				shuiYue.level = 2;
 			}
 			ctrl.addBuff(shuiYue);

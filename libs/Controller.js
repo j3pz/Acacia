@@ -145,6 +145,7 @@ class Controller {
 	 * @memberOf Controller
 	 */
 	addBuff(buff) {
+		buff.checkTime = this.time;
 		if (!(buff.name in this.buffCtrl.selfList)) {
 			this.buffCtrl.selfList[buff.name] = buff;
 			if (buff.type == 'buff') {
@@ -175,6 +176,7 @@ class Controller {
 	 * @memberOf Controller
 	 */
 	addDebuff(buff) {
+		buff.checkTime = this.time;
 		if (!(buff.name in this.buffCtrl.targetList)) {
 			this.buffCtrl.targetList[buff.name] = buff;
 			if (buff.type == 'buff') {
@@ -247,6 +249,7 @@ class Controller {
 	dotRefresh(buffName) {
 		if (buffName in this.buffCtrl.targetList) {
 			const buff = this.buffCtrl.targetList[buffName];
+			buff.updateTime(this);
 			const refreshTime = buff.remain % buff.interval;
 			const selfHaste = this.myself.attributes.haste;
 			const extraHaste = this.myself.extra.haste;
@@ -276,7 +279,9 @@ class Controller {
 	 */
 	getActiveBuff(buffName) {
 		const buff = this.buffCtrl.selfList[buffName];
-		if (buff) return buff;
+		if (buff && buff.updateTime(this)) {
+			return buff;
+		}
 		return false;
 	}
 
@@ -290,7 +295,9 @@ class Controller {
 	 */
 	getActiveDebuff(buffName) {
 		const buff = this.buffCtrl.targetList[buffName];
-		if (buff) return buff;
+		if (buff && buff.updateTime(this)) {
+			return buff;
+		}
 		return false;
 	}
 
@@ -332,7 +339,7 @@ class Controller {
 	 */
 	hasBuff(buffName) {
 		const buff = this.buffCtrl.selfList[buffName];
-		if (buff) return true;
+		if (buff && buff.updateTime(this)) return true;
 		return false;
 	}
 
@@ -346,7 +353,7 @@ class Controller {
 	 */
 	hasDebuff(buffName) {
 		const buff = this.buffCtrl.targetList[buffName];
-		if (buff) return true;
+		if (buff && buff.updateTime(this)) return true;
 		return false;
 	}
 
@@ -495,7 +502,7 @@ class Controller {
 		// 技能CD 时间控制
 		this.cdCtrl();
 		// buff 时间控制
-		this.buffTimeCtrl();
+		// this.buffTimeCtrl();
 		// dps 计算
 		this.time++;
 		// if (this.time % 16 === 0) {
