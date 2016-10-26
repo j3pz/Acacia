@@ -97,6 +97,7 @@ acacia.run();
 以下示例代码中，`ctrl` 为一个控制器实例。
 #### addBuff(buff: Buff)
 向控制器自身 Buff 列表中添加一个 Buff，该 Buff 在游戏中应该出现在角色自己身上。该方法的参数为一个 Buff 对象。该方法可用于刷新一个自身 Buff，并增加层数（如果没有到达最大层数）。
+
 ```javascript
 // 阳明指命中后添加一层恣游buff
 const ziyou = ctrl.getBuff('恣游');
@@ -105,6 +106,7 @@ ctrl.addBuff(ziyou);
 
 #### addDebuff(buff: Buff)
 向控制器目标 Buff 列表中添加一个 Buff，该 Buff 在游戏中应该出现在目标身上。该方法的参数为一个 Buff 对象。该方法可用于刷新一个目标 Buff，并增加层数（如果没有到达最大层数）。dot 的刷新需要使用 `dotRefresh` 方法
+
 ```javascript
 // 添加噬骨
 const shigu = ctrl.getBuff('噬骨');
@@ -113,6 +115,7 @@ ctrl.addDebuff(shigu);
 
 #### deleteBuff(buffName: string)
 从控制器自身 Buff 列表中移除一个 Buff，参数为 Buff 的名称。
+
 ```javascript
 // 流离奇穴使兰摧不需运功
 ctrl.deleteBuff('流离');
@@ -120,6 +123,7 @@ ctrl.deleteBuff('流离');
 
 #### deleteDebuff(buffName: string)
 从控制器目标 Buff 列表中移除一个 Buff，参数为 Buff 的名称。如果该 Buff 为持续伤害技能，该方法目前不会自动计算其伤害。
+
 ```javascript
 // 玉石俱焚吞噬 dot
 ctrl.deleteDebuff('商阳指');
@@ -129,6 +133,7 @@ ctrl.deleteDebuff('兰摧玉折');
 
 #### dotRefresh(buffName: string)
 刷新一个 dot。
+
 ```javascript
 if (ctrl.isTalentActive('轻弃')) {
     ctrl.dotRefresh('商阳指');
@@ -139,6 +144,7 @@ if (ctrl.isTalentActive('轻弃')) {
 
 #### getActiveBuff(buffName: string)
 获得一个正在角色自身身上生效的 Buff 的状态。如果该 Buff 存在，则返回这个 Buff 本身，反之则返回 false。
+
 ```javascript
 const fenYu = ctrl.getActiveBuff('焚玉');
 const remainTime = fenyu.remain; // 获取焚玉剩余时间
@@ -146,6 +152,7 @@ const remainTime = fenyu.remain; // 获取焚玉剩余时间
 
 #### getActiveDebuff(buffName: string)
 获得一个正在目标身上生效的 Buff 的状态。如果该 Buff 存在，则返回这个 Buff 本身，反之则返回 false。
+
 ```javascript
 const shangYang = ctrl.getActiveDebuff('商阳指');
 const remainTime  = shangYang.remain; // 获取商阳指剩余时间
@@ -153,6 +160,7 @@ const remainTime  = shangYang.remain; // 获取商阳指剩余时间
 
 #### getBuff(buffName: string)
 从技能库中获取一个 Buff 对象。如果该 Buff 存在，则返回这个 Buff 本身，反之则返回 false。该方法会获得一个全新的 Buff，可用于前述的 `addBuff` 和 `addDebuff` 方法。如需要获取正在生效的 Buff 状态，需要使用 `getActiveBuff` 和 `getActiveDebuff` 方法。
+
 ```javascript
 // 阳明指命中后添加一层恣游buff
 const ziyou = ctrl.getBuff('恣游');
@@ -161,12 +169,15 @@ ctrl.addBuff(ziyou);
 
 #### getSkill(skillName: string)
 获取一个技能的状态。如果该技能存在，则返回这个技能本身，反之则返回 false。该方法可用于获取技能的 CD，状态，并对其进行修改以达到重置技能 CD，或改变其能力的功能。
+
 ```javascript
 const yushi = ctrl.getSkill('玉石俱焚');
 yushi.cdRemain = 0; // 重置玉石俱焚CD
 ```
+
 #### hasBuff(buffName: string)
 查看自身是否存在某个 Buff。
+
 ```javascript
 // 乱洒添加DOT
 if(ctrl.hasBuff('乱洒青荷')){
@@ -218,16 +229,7 @@ if (ctrl.isTalentActive('梦歌')) {
     onSkillHitEvent(ctrl) { // 技能命中事件，将在技能命中后触发
         // 添加商阳指dot
         const shangYang = ctrl.getBuff('商阳指');
-        // 噬骨判定
-        for (const recipe of ctrl.recipes.shangYang) {
-            if (recipe.active && recipe.effect == 'durationAdd') {
-                shangYang.duration += recipe.value;
-            }
-            if (recipe.active && recipe.effect == 'debuffAdd') {
-                const debuff = ctrl.getBuff(recipe.value);
-                ctrl.addDebuff(debuff);
-            }
-        }
+        shangYang.applyRecipe(ctrl);
         // 生息奇穴：混元性持续伤害提高10%，持续伤害效果被卸除后，每个持续伤害使目标1.5秒内无法受到治疗效果，最多叠加4.5秒。
         if (ctrl.isTalentActive('生息')) {
             shangYang.extraAttr.damage += 10;
@@ -255,6 +257,7 @@ if (ctrl.isTalentActive('梦歌')) {
 对于一个心法，应当构建其增益与减益效果（Buff）库以供模拟器使用。
 
 一个 Buff 的数据应包含以下信息：
+
 ```javascript
 {
     icon: 3406,         // Buff 的技能图标，供浏览器环境使用
@@ -282,6 +285,7 @@ if (ctrl.isTalentActive('梦歌')) {
 
 Buff 数据会被控制器转化为 Buff 对象。对象中的所有数据均可以通过 this 来调用和更改。也可以在其他地方通过 `ctrl.getBuff(Buff 名)` 方法获得 Buff 后进行更改。通过该方法获得的 Buff 为初始状态，并具有一个额外的属性 `level: 1` 表示初始层数。
 例如，夜思奇穴可以使“水月无间”叠加 2 层，可通过以下方法实现：
+
 ```javascript
 const shuiYue = ctrl.getBuff('水月无间');
 // 夜思奇穴：“水月无间”额外使1个招式无需运功，并立刻回复自身10%内力值。
