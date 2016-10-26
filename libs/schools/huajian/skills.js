@@ -496,7 +496,7 @@ const skills = [
 			// 夜思奇穴：“水月无间”额外使1个招式无需运功，并立刻回复自身10%内力值。
 			if (ctrl.isTalentActive('夜思')) {
 				shuiYue.canStack = true;
-				shuiYue.maxLevel = true;
+				shuiYue.maxLevel = 2;
 				shuiYue.level = 2;
 			}
 			ctrl.addBuff(shuiYue);
