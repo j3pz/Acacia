@@ -26,6 +26,20 @@ class Buff {
 		return this;
 	}
 
+	applyRecipe(ctrl) {
+		if (this.recipeName && this.recipeName != 'none') {
+			for (const recipe of ctrl.recipes[this.recipeName]) {
+				if (recipe.active && recipe.effect == 'durationAdd') {
+					this.duration += recipe.value;
+				}
+				if (recipe.active && recipe.effect == 'debuffAdd') {
+					const debuff = ctrl.getBuff(recipe.value);
+					ctrl.addDebuff(debuff);
+				}
+			}
+		}
+	}
+
 	calc(ctrl, multiHit) {
 		let dotHit = 1;
 		if (multiHit) {
