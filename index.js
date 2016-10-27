@@ -1,6 +1,6 @@
 const Controller = require('./libs/Controller');
-const ProgressBar = require('progress');
 const workerFarm = require('worker-farm');
+const present = require('present');
 
 class Jx3Simulator {
 	constructor(options) {
@@ -50,42 +50,34 @@ class Jx3Simulator {
 
 	run() {
 		if (this.options.iterator > 1) {
-			this.multipleSimulation();
-		} else {
-			this.oneSimulation();
+			return this.multipleSimulation();
 		}
+		return this.oneSimulation();
 	}
 
 	oneSimulation() {
 		const options = this.options;
 		const period = options.duration * 16;
-		const barOpts = {
-			width: 20,
-			total: period,
-			clear: true,
-		};
-		let lastTick = 0;
-		const bar = new ProgressBar('正在模拟： [:bar] :percent :etas', barOpts);
-		setTimeout(() => {
-			console.time('模拟完成，消耗时间');
-			console.log(`模拟时间: ${options.duration}s`);
-			const ctrl = new Controller(options);
-			let time = 0;
-			while (time++ < period) {
-				const percentage = (time / period) * 100;
-				if (percentage % 5 == 0) {
-					bar.tick(time - lastTick);
-					lastTick = time;
+		return new Promise((resolve, reject) => {
+			setTimeout(() => {
+				const t0 = present();
+				const ctrl = new Controller(options);
+				let time = 0;
+				while (time++ < period) {
+					ctrl.digest();
 				}
-				ctrl.digest();
-			}
-			console.timeEnd('模拟完成，消耗时间');
-			let dps = ctrl.damage / options.duration;
-			dps = dps.toFixed(0);
-			console.log(`总伤害：${ctrl.damage}`);
-			console.log(`DPS：${dps}`);
-		}, 0);
-		console.log('开始模拟');
+				const t1 = present();
+				let dps = ctrl.damage / options.duration;
+				dps = dps.toFixed(0);
+				const info = {
+					dps,
+					performance: t1 - t0,
+					damage: ctrl.damage,
+					duration: options.duration,
+				};
+				resolve(info);
+			}, 0);
+		});
 	}
 
 	multipleSimulation() {
@@ -93,21 +85,28 @@ class Jx3Simulator {
 		let ret = 0;
 		const options = this.options;
 		const results = [];
-		function resultCollector(err, result) {
-			results.push(result * 1);
-			if (++ret == options.iterator) {
-				workerFarm.end(workers);
-				let dps = results.reduce((a, b) => a + b) / ret;
-				dps = parseInt(dps, 10);
-				console.log(`DPS: ${dps}`);
-				console.timeEnd('多线程模拟，消耗时间');
+		return new Promise((resolve, reject) => {
+			const t0 = present();
+			function resultCollector(err, result) {
+				results.push(result * 1);
+				if (++ret == options.iterator) {
+					workerFarm.end(workers);
+					const dps = Math.floor(results.reduce((a, b) => a + b) / ret);
+					const t1 = present();
+					const info = {
+						dps,
+						results,
+						performance: t1 - t0,
+						duration: options.duration,
+						iterator: ret,
+					};
+					resolve(info);
+				}
 			}
-		}
-		console.time('多线程模拟，消耗时间');
-		console.log(`开始模拟，模拟时间${options.duration}s，模拟次数${options.iterator}次`);
-		for (let i = 0; i < options.iterator; i++) {
-			workers(options, resultCollector);
-		}
+			for (let i = 0; i < options.iterator; i++) {
+				workers(options, resultCollector);
+			}
+		});
 	}
 }
 
