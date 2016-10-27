@@ -3,6 +3,22 @@ const Skill = require('./Skill');
 const Macro = require('./Macro');
 const Utils = require('./Utils');
 
+const huajianBuff = require('./schools/huajian/buffs');
+const huajianSkills = require('./schools/huajian/skills');
+const huajianRecipes = require('./schools/huajian/recipes');
+const huajianTalents = require('./schools/huajian/talents');
+const huajianUutils = require('./schools/huajian/utils');
+
+const schools = {
+	huajian: {
+		buffs: huajianBuff,
+		skills: huajianSkills,
+		recipes: huajianRecipes,
+		talents: huajianTalents,
+		utils: huajianUutils,
+	},
+};
+
 const targetList = {
 	96: {
 		id: 0,
@@ -53,13 +69,7 @@ const targetList = {
 class Controller {
 	constructor(options) {
 		const school = options.school;
-		this.schoolData = {
-			buffs: require(`./schools/${school}/buffs`),		// eslint-disable-line global-require
-			skills: require(`./schools/${school}/skills`),		// eslint-disable-line global-require
-			recipes: require(`./schools/${school}/recipes`),	// eslint-disable-line global-require
-			talents: require(`./schools/${school}/talents`),	// eslint-disable-line global-require
-			utils: require(`./schools/${school}/utils`),	// eslint-disable-line global-require
-		};
+		this.schoolData = schools[school];
 		this.buffCtrl = {
 			selfList: {},
 			targetList: {},
