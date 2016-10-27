@@ -20,9 +20,9 @@ const testConfig = {
 		delay: 100,
 	},
 	effects: {
-		cw: 0,
-		water: 0, // '水·灭虚',
-		thunder: 0, // '雷·激流',
+		cw: 2,
+		water: '水·灭虚',
+		thunder: '雷·激流',
 		setEffect: [],
 	},
 	talent: [0, 0, 1, 2, 0, 2, 3, 0, 0, 0, 0, 0],
