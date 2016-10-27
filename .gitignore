@@ -4,3 +4,4 @@
 app.js
 /.vscode
 jsconfig.json
+/coverage

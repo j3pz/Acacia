@@ -9,5 +9,9 @@
         "linebreak-style": ["off", "windows"],
         "no-param-reassign": "off",
         "consistent-return": "off"
-    }
+    },
+    "globals":{
+		"describe": false,
+		"it": false
+	}
 }
