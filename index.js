@@ -9,10 +9,25 @@ class Jx3Simulator {
 			duration: 300,
 			iterator: 5,
 			target: 98,
-			self: {},
-			talent: [],
+			self: {
+				basicAttack: 0,
+				spunk: 0,
+				crit: 0,
+				critEff: 0,
+				hit: 0,
+				haste: 0,
+				strain: 0,
+				overcome: 0,
+				delay: 100,
+			},
+			talent: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 			recipes: {},
-			effects: {},
+			effects: {
+				cw: 0,
+				water: 0,
+				thunder: 0,
+				setEffect: [],
+			},
 		};
 		if (options && typeof options === 'object') {
 			this.init(options);
