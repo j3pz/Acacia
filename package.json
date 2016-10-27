@@ -1,6 +1,6 @@
 {
   "name": "jx3-simulator",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "剑网3DPS模拟器",
   "main": "index.js",
   "scripts": {
