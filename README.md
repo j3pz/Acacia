@@ -1,8 +1,9 @@
 # Acacia 
 
-![experimental](https://img.shields.io/badge/stability-experimental-orange.svg?style=flat-square)
-![node](https://img.shields.io/badge/node-4.4.7-green.svg?style=flat-square)
-![license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)
+[![npm](https://img.shields.io/npm/v/jx3-simulator.svg?maxAge=3600&style=flat-square)](https://github.com/j3pz/Acacia)
+[![CircleCI](https://img.shields.io/circleci/project/j3pz/Acacia.svg?maxAge=3600&style=flat-square)](https://circleci.com/gh/j3pz/Acacia/tree/master)
+[![codecov](https://img.shields.io/codecov/c/github/j3pz/Acacia.svg?maxAge=3600&style=flat-square)](https://codecov.io/gh/j3pz/Acacia)
+![node](https://img.shields.io/badge/node-6.9.1-green.svg?style=flat-square)
 
 Acacia 是由[剑网3 配装器](https://www.j3pz.com)开发的一个 剑网3 输出循环模拟工具，旨在提供标准化的仿真平台，使得各个心法都能轻松的作为模块载入到模拟器中，而无需修改模拟器本身的代码。
 
@@ -21,7 +22,7 @@ const Acacia = require('jx3-simulator');
 const config = {
     school: 'huajian',      // 指定门派心法，目前仅支持花间
     duration: 86400,        // 指定单次模拟的时间，单位为秒
-    iterator: 1,            // 指定循环次数
+    iterator: 2,            // 指定循环次数
     target: 97,             // 指定目标等级
     self: {                 // 指定自身属性
         basicAttack: 2748,  // 基础攻击
@@ -52,18 +53,14 @@ const config = {
 ```
 
 将选项传入构造函数中，并执行 run 方法开始模拟。
+
 ```javascript
 const acacia = new Acacia(config);
-acacia.run();
+acacia.run().then((info) => {
+    console.log(info.dps);      // 输出模拟得到的 DPS
+    console.log(info.results);  // 对于多次模拟，会额外返回一个结果集
+});
 ```
-
-如果你进行的是单次长时间模拟，将会看到控制台如下输出：
-
-![single](https://cloud.githubusercontent.com/assets/8521174/19627394/b20e270a-9991-11e6-9d31-3007c4fa50b6.gif)
-
-如果是多次模拟，将会看到控制台如下输出：
-
-<img src="https://cloud.githubusercontent.com/assets/8521174/19627396/bd448812-9991-11e6-9b2a-73a727411903.png" width="380"></img>
 
 ## 详细文档
 ### 设置 Config
