@@ -6,7 +6,7 @@ const browserify = require('browserify');
 const babel = require('babelify');
 
 function compile(watch) {
-	const bundler = browserify('./index.js', { debug: true, standalone: 'acacia' })
+	const bundler = browserify('./browser.js', { debug: true, standalone: 'Acacia' })
 		.transform(babel.configure({
 			presets: ['es2015'],
 		}));
