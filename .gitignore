@@ -5,3 +5,4 @@ app.js
 /.vscode
 jsconfig.json
 /coverage
+/test.html
