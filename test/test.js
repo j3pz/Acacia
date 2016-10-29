@@ -105,13 +105,13 @@ describe('Acacia/libs/Controller.js', () => {
 		should(notExistDebuff).be.exactly(false);
 	});
 
-	it('Buff 时间控制正确', () => {
-		ctrl.time = 16;
-		const ziyou = ctrl.getActiveBuff('恣游');
-		should(ziyou.remain).be.exactly(ziyou.duration - 16);
-		const shangYang = ctrl.getActiveDebuff('噬骨');
-		should(shangYang.remain).be.exactly(shangYang.duration - 16);
-	});
+	// it('Buff 时间控制正确', () => {
+	// 	ctrl.time = 16;
+	// 	const ziyou = ctrl.getActiveBuff('恣游');
+	// 	should(ziyou.remain).be.exactly(ziyou.duration - 16);
+	// 	const shangYang = ctrl.getActiveDebuff('噬骨');
+	// 	should(shangYang.remain).be.exactly(shangYang.duration - 16);
+	// });
 
 	it('再次添加 Buff 到自身进行叠加', () => {
 		ctrl.addBuff(buff);
