@@ -86,7 +86,7 @@ class Skill {
 			this.extraAttr.strainAddPercent + ctrl.myself.extra.strainAddPercent;
 		// 破防 = 自身破防等级 + 基础破防等级 * (Buff 破防百分比加成 + 自身破防百分比加成) + Buff 破防等级加成 + 自身破防等级加成
 		const overcome = parseInt(ctrl.myself.attributes.overcome, 10) +
-			((ctrl.myself.attributes.overcome - (ctrl.myself.attributes.spunk * 0.34)) *
+			((ctrl.myself.attributes.overcome - (ctrl.myself.attributes.spunk * 0.09)) *
 				((this.extraAttr.overcomeAddPercent / 100) + (ctrl.myself.extra.overcomeAddPercent / 100))) +
 			parseInt(this.extraAttr.overcomeAddBase, 10) +
 			parseInt(ctrl.myself.extra.overcomeAddBase, 10);
