@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const clone = require('clone');
 
 class Skill {
 	constructor(data) {
@@ -25,7 +25,7 @@ class Skill {
 	}
 
 	cleanExtra() {
-		this.extraAttr = _.clone(this.fixAttr);
+		this.extraAttr = clone(this.fixAttr);
 	}
 
 	applyRecipe(ctrl) {

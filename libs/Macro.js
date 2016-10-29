@@ -1,5 +1,5 @@
 const Utils = require('./Utils');
-const _ = require('lodash');
+const clone = require('clone');
 
 class Macro {
 	// 宏指令
@@ -24,7 +24,7 @@ class Macro {
 	static fcast(ctrl, skillName) {
 		// 强行释放技能
 		const skill = ctrl.getSkill(skillName);
-		const skillParam = _.clone(skill);
+		const skillParam = clone(skill);
 
 		if (!skill || skill.cdRemain > 0) {
 			return false;
