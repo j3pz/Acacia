@@ -48,7 +48,10 @@ class Jx3Simulator {
 		}
 	}
 
-	run() {
+	run(debug = false) {
+		if (debug) {
+			return new Controller(this.options);
+		}
 		if (this.options.iterator > 1) {
 			return this.multipleSimulation();
 		}
@@ -74,6 +77,7 @@ class Jx3Simulator {
 					performance: t1 - t0,
 					damage: ctrl.damage,
 					duration: options.duration,
+					log: ctrl.logs,
 				};
 				resolve(info);
 			}, 0);
