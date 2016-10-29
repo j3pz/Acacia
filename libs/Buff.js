@@ -145,10 +145,10 @@ class Buff {
 			(1 + (onFightAttr.damageAddPercent / 100));
 		damage = damage.toFixed(0) * dotHit;
 		const status = (flag.insight ? 'insight' : '') + (flag.crit ? 'crit' : '') + (flag.hit ? 'hit' : '');
-		const log = `${this.name}(buff) ${status} ${damage}`;
+		// const log = `${this.name}(buff) ${status} ${damage}`;
 
-		Utils.logln(log);
-		ctrl.log(this.name, status, damage);
+		// Utils.logln(log);
+		ctrl.log(`${this.name}(buff)`, status, damage);
 		return damage;
 	}
 }
