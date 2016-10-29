@@ -61,12 +61,11 @@ class Skill {
 	}
 
 	calc(ctrl) {
-		this.applyRecipe(ctrl);
-		// 面板攻击 = 基础攻击 + 最受益属性 * 最受益属性加成 * (Buff 攻击百分比加成 + 自身攻击百分比加成) + Buff 攻击加成 + 自身攻击加成
-		const attack = parseInt(ctrl.myself.attributes.basicAttack, 10) +
-			(ctrl.myself.attributes.spunk * 1.95 *						// TODO: 支持多心法最受益属性
+		// 面板攻击 = (基础攻击 * (Buff 攻击百分比加成 + 自身攻击百分比加成)) + (最受益属性 * 最受益属性加成) + Buff 攻击加成 + 自身攻击加成
+		const attack = (parseInt(ctrl.myself.attributes.basicAttack, 10) *
 				(1 + (this.extraAttr.attackAddPercent / 100) +
 				(ctrl.myself.extra.attackAddPercent / 100))) +
+				(ctrl.myself.attributes.spunk * 1.95) +
 			this.extraAttr.attackAddBase +
 			ctrl.myself.extra.attackAddBase;
 		// 会心率 = 自身会心率 + (Buff 会心等级加成 + 自身会心等级加成) / 41.43925 + Buff 会心率加成 + 自身会心率加成
