@@ -158,21 +158,21 @@ class Controller {
 		buff.checkTime = this.time;
 		if (!(buff.name in this.buffCtrl.selfList)) {
 			this.buffCtrl.selfList[buff.name] = buff;
-			if (buff.type == 'buff') {
-				for (const key of Object.keys(buff.data)) {
-					const buffNumber = buff.data[key];
-					this.myself.extra[key] += buffNumber * buff.level;
-				}
-			}
+			// if (buff.type == 'buff') {
+			// 	for (const key of Object.keys(buff.data)) {
+			// 		const buffNumber = buff.data[key];
+			// 		this.myself.extra[key] += buffNumber * buff.level;
+			// 	}
+			// }
 		} else {
 			const existBuff = this.buffCtrl.selfList[buff.name];
 			const level = Math.min(existBuff.level + 1, existBuff.maxLevel);
-			if (buff.type == 'buff' && existBuff.level < level) {
-				for (const key of Object.keys(buff.data)) {
-					const buffNumber = buff.data[key];
-					this.myself.extra[key] += buffNumber;
-				}
-			}
+			// if (buff.type == 'buff' && existBuff.level < level) {
+			// 	for (const key of Object.keys(buff.data)) {
+			// 		const buffNumber = buff.data[key];
+			// 		this.myself.extra[key] += buffNumber;
+			// 	}
+			// }
 			this.buffCtrl.selfList[buff.name].level = level;
 		}
 		this.buffCtrl.selfList[buff.name].remain = buff.duration;
@@ -188,22 +188,28 @@ class Controller {
 	addDebuff(buff) {
 		buff.checkTime = this.time;
 		if (!(buff.name in this.buffCtrl.targetList)) {
+			// if(buff.type == 'dot'){
+			// 	const selfHaste = this.myself.attributes.haste;
+			// 	const extraHaste = this.myself.extra.haste;
+			// 	buff.interval = Utils.hasteCalc(selfHaste, extraHaste, buff.interval);
+			// 	buff.duration = Utils.hasteCalc(selfHaste, extraHaste, buff.duration);
+			// }
 			this.buffCtrl.targetList[buff.name] = buff;
-			if (buff.type == 'buff') {
-				for (const key of Object.keys(buff.data)) {
-					const buffNumber = buff.data[key];
-					this.myself.extra[key] += buffNumber * buff.level;
-				}
-			}
+			// if (buff.type == 'buff') {
+			// 	for (const key of Object.keys(buff.data)) {
+			// 		const buffNumber = buff.data[key];
+			// 		this.myself.extra[key] += buffNumber * buff.level;
+			// 	}
+			// }
 		} else {
 			const existBuff = this.buffCtrl.targetList[buff.name];
 			const level = Math.min(existBuff.level + 1, existBuff.maxLevel);
-			if (buff.type == 'buff' && existBuff.level < level) {
-				for (const key of Object.keys(buff.data)) {
-					const buffNumber = buff.data[key];
-					this.myself.extra[key] += buffNumber;
-				}
-			}
+			// if (buff.type == 'buff' && existBuff.level < level) {
+			// 	for (const key of Object.keys(buff.data)) {
+			// 		const buffNumber = buff.data[key];
+			// 		this.myself.extra[key] += buffNumber;
+			// 	}
+			// }
 			this.buffCtrl.targetList[buff.name].level = level;
 		}
 		this.buffCtrl.targetList[buff.name].remain = buff.duration;
@@ -220,12 +226,12 @@ class Controller {
 		if (buffName in this.buffCtrl.selfList) {
 			const buff = this.buffCtrl.selfList[buffName];
 			delete this.buffCtrl.selfList[buffName];
-			if (buff.type == 'buff') {
-				for (const key of Object.keys(buff.data)) {
-					const buffNumber = buff.data[key];
-					this.myself.extra[key] -= buffNumber * buff.level;
-				}
-			}
+			// if (buff.type == 'buff') {
+			// 	for (const key of Object.keys(buff.data)) {
+			// 		const buffNumber = buff.data[key];
+			// 		this.myself.extra[key] -= buffNumber * buff.level;
+			// 	}
+			// }
 		}
 	}
 
@@ -240,12 +246,12 @@ class Controller {
 		if (buffName in this.buffCtrl.targetList) {
 			const buff = this.buffCtrl.targetList[buffName];
 			delete this.buffCtrl.targetList[buffName];
-			if (buff.type == 'buff') {
-				for (const key of Object.keys(buff.data)) {
-					const buffNumber = buff.data[key];
-					this.myself.extra[key] -= buffNumber * buff.level;
-				}
-			}
+			// if (buff.type == 'buff') {
+			// 	for (const key of Object.keys(buff.data)) {
+			// 		const buffNumber = buff.data[key];
+			// 		this.myself.extra[key] -= buffNumber * buff.level;
+			// 	}
+			// }
 		}
 	}
 
@@ -259,15 +265,14 @@ class Controller {
 	dotRefresh(buffName) {
 		if (buffName in this.buffCtrl.targetList) {
 			const buff = this.buffCtrl.targetList[buffName];
-			buff.updateTime(this);
+			// buff.updateTime(this);
 			const refreshTime = buff.remain % buff.interval;
-			const selfHaste = this.myself.attributes.haste;
-			const extraHaste = this.myself.extra.haste;
+			// const selfHaste = this.myself.attributes.haste;
+			// const extraHaste = this.myself.extra.haste;
 			buff.remain = (((buff.duration / buff.interval) - 1) *
-				Utils.hasteCalc(selfHaste, extraHaste, buff.interval)) +
-				Utils.hasteCalc(selfHaste, extraHaste, refreshTime);
-			buff.interval = Utils.hasteCalc(selfHaste, extraHaste, buff.interval);
-			buff.duration = Utils.hasteCalc(selfHaste, extraHaste, buff.duration);
+				buff.interval) + refreshTime;
+			// buff.interval = Utils.hasteCalc(selfHaste, extraHaste, buff.interval);
+			// buff.duration = Utils.hasteCalc(selfHaste, extraHaste, buff.duration);
 			if ('addedInterval' in buff) buff.addedInterval = false;
 			if (buff.recipeName != 'none') {
 				for (const recipe of this.recipes[buff.recipeName]) {
@@ -289,7 +294,8 @@ class Controller {
 	 */
 	getActiveBuff(buffName) {
 		const buff = this.buffCtrl.selfList[buffName];
-		if (buff && buff.updateTime(this)) {
+		// if (buff && buff.updateTime(this)) {
+		if (buff) {
 			return buff;
 		}
 		return false;
@@ -305,7 +311,8 @@ class Controller {
 	 */
 	getActiveDebuff(buffName) {
 		const buff = this.buffCtrl.targetList[buffName];
-		if (buff && buff.updateTime(this)) {
+		// if (buff && buff.updateTime(this)) {
+		if (buff) {
 			return buff;
 		}
 		return false;
@@ -349,7 +356,8 @@ class Controller {
 	 */
 	hasBuff(buffName) {
 		const buff = this.buffCtrl.selfList[buffName];
-		if (buff && buff.updateTime(this)) return true;
+		// if (buff && buff.updateTime(this)) return true;
+		if (buff) return true;
 		return false;
 	}
 
@@ -363,7 +371,8 @@ class Controller {
 	 */
 	hasDebuff(buffName) {
 		const buff = this.buffCtrl.targetList[buffName];
-		if (buff && buff.updateTime(this)) return true;
+		// if (buff && buff.updateTime(this)) return true;
+		if (buff) return true;
 		return false;
 	}
 
@@ -417,9 +426,6 @@ class Controller {
 		for (const buffKey of Object.keys(this.buffCtrl.selfList)) {
 			const buff = this.buffCtrl.selfList[buffKey];
 			buff.remain--;
-			if (buff.type == 'dot' && (buff.duration - buff.remain) % buff.interval === 0) {
-				buff.calc(this);
-			}
 			if (buff.remain <= 0 || buff.level <= 0) {
 				this.deleteBuff(buff.name);
 			}
@@ -512,7 +518,8 @@ class Controller {
 		// 技能CD 时间控制
 		this.cdCtrl();
 		// buff 时间控制
-		// this.buffTimeCtrl();
+		this.buffTimeCtrl();
+		this.extraAttributeApply();
 		// dps 计算
 		this.time++;
 		// if (this.time % 16 === 0) {
