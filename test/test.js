@@ -9,14 +9,14 @@ const testConfig = {
 	iterator: 1,
 	target: 97,
 	self: {
-		basicAttack: 2748,
-		spunk: 706,
-		crit: 15.15,
-		critEff: 211.77,
-		hit: 106.76,
-		haste: 321,
-		strain: 20.09,
-		overcome: 900,
+		basicAttack: 2885,
+		spunk: 1044,
+		crit: 22.3,
+		critEff: 218.01,
+		hit: 108.25,
+		haste: 458,
+		strain: 29.94,
+		overcome: 1137,
 		delay: 100,
 	},
 	effects: {
@@ -48,7 +48,7 @@ describe('Acacia/index.js', () => {
 	it('返回合适的DPS计算值，单实例', () => {
 		const acacia = new Acacia(testConfig);
 		acacia.run().then((info) => {
-			should(info.dps).within(8000, 9000);
+			should(info.dps).within(11000, 13000);
 		});
 	});
 
@@ -57,7 +57,7 @@ describe('Acacia/index.js', () => {
 		testConfigM.iterator = 5;
 		const acacia = new Acacia(testConfigM);
 		acacia.run().then((info) => {
-			should(info.dps).within(8000, 9000);
+			should(info.dps).within(11000, 13000);
 			should(info.results.length).be.exactly(testConfig.iterator);
 		});
 	});
