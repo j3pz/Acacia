@@ -1,7 +1,7 @@
 const Controller = require('../libs/Controller');
 const Acacia = require('../index');
 const should = require('should');
-const _ = require('lodash');
+const clone = require('clone');
 
 const testConfig = {
 	school: 'huajian',
@@ -53,7 +53,7 @@ describe('Acacia/index.js', () => {
 	});
 
 	it('返回结果集，多线程计算', () => {
-		const testConfigM = _.clone(testConfig);
+		const testConfigM = clone(testConfig);
 		testConfigM.iterator = 5;
 		const acacia = new Acacia(testConfigM);
 		acacia.run().then((info) => {
